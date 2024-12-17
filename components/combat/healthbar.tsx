@@ -21,9 +21,7 @@ export default function Healthbar() {
       setWidth((currentWidth) => {
         const diff = targetHealth.current - currentWidth
 
-        if (Math.abs(diff) < 0.8) {
-          return targetHealth.current
-        }
+        if (Math.abs(diff) < 0.8) return targetHealth.current
 
         return currentWidth + diff / interpRate
       })
@@ -56,8 +54,9 @@ export default function Healthbar() {
       <div className="text-center">{healthText}</div>
       <div className="relative h-8 w-48 border border-black">
         <div className="relative h-full" style={{ width: `${Math.max(0, Math.min(100, width))}%` }}>
+          {/* <div className="absolute w-full top-0 h-1/6 bg-gradient-to-b from-white/60 to-white/0 z-10"></div> */}
           <div className={clsx("h-full bg-gradient-to-b from-hpgreen to-darkgreen rounded-sm transform-gpu")}></div>
-          <div className="absolute h-3/4 bottom-0 w-full bg-gradient-to-b from-white/0 via-white/80 to-white/20 z-10"></div>
+          {/* <div className="absolute h-3/4 bottom-0 w-full bg-gradient-to-b from-white/0 via-white/80 to-white/20 z-10"></div> */}
         </div>
       </div>
     </>
