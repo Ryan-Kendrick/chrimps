@@ -1,4 +1,4 @@
-export type UpgradeId = "click-multi" | "dot-multi"
+export type UpgradeId = "adventurer-otp" | "warrior-otp" | "healer-otp" | "mage-otp"
 export type UpgradeIdWithLevel =
   | "click-multi.1"
   | "click-multi.2"
@@ -7,19 +7,10 @@ export type UpgradeIdWithLevel =
   | "dot-multi.2"
   | "dot-multi.3"
 export type CostKey = "clickMultiCosts" | "dotMultiCosts"
-export type LevelUpID = "click" | "dot"
 
 export interface UpgradeElement {
   upgradeId: UpgradeId
   purchasedUpgradeLevel: string
-}
-
-export interface Upgrade {
-  visibleAtZone: number
-  elementId: UpgradeId
-  displayName: string
-  MultiCosts: number[]
-  levelUpCost: (currentLevel: number) => number
 }
 
 export type PrestigeUpgradeName = "damage" | "health"
@@ -39,9 +30,25 @@ export interface PrestigeState {
   cost: number
   purchaseCount: number
 }
+
+export interface OTPConfig {
+  OTPCosts: number[]
+  OTPModifiers: number[]
+  OTPDescriptions: string[]
+}
+export interface Upgrade {
+  visibleAtZone: number
+  elementId: UpgradeId
+  displayName: string
+  displayStat: string
+  OneTimePurchases: OTPConfig
+  levelUpCost: (currentLevel: number) => number
+}
 export interface UpgradeConfig {
-  click: Upgrade
-  dot: Upgrade
+  adventurer: Upgrade
+  warrior: Upgrade
+  healer: Upgrade
+  mage: Upgrade
   prestige: PrestigeUpgradeConfig[]
   calcMultiCost: (upgradeName: UpgradeId, upgradeCount: number) => number
   calcAdditiveCost: (atLevel: number, prestigeUpgrade: PrestigeUpgradeConfig) => number
@@ -52,7 +59,7 @@ export interface PlayerCalc {
   dotDamage: (dotLevel: number, dotMulti: number, pDamage: number, achievementModifier: number) => number
 }
 
-export type UpgradeKey = "click" | "dot"
+export type UpgradeKey = "adventurer" | "warrior" | "healer" | "mage"
 
 export type UpgradeProps = {
   [key in UpgradeKey]: {
