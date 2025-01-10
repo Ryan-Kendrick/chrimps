@@ -1,6 +1,6 @@
 import { BaseEnemy, Enemy, MonsterType, BaseMonsterConfig, EnemyState } from "../models/monsters"
 import { ZONE_CONFIG } from "./zone"
-import slimeURL from "../assets/monsters/slime.webp"
+import slimeURL from "../assets/monsters/slime.svg"
 import wormURL from "../assets/monsters/ph-worm.webp"
 import cacodemonURL from "../assets/monsters/ph-cacodemon.webp"
 import yetiURL from "../assets/monsters/ph-yeti.webp"
