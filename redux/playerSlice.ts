@@ -221,6 +221,17 @@ export const selectPlasmaReserved = (state: RootState) => state.player.plasmaRes
 export const selectAchievementModifier = (state: RootState) => state.player.achievementModifier
 
 const prestigeDamage = UPGRADE_CONFIG.prestige.find((pUpgrade) => pUpgrade.id === "damage")!.modifier
+export const selectAdventurerDamage = createSelector(
+  [selectClickLevel, (state: RootState) => state.player.clickMultiUpgradeCount],
+  (adventurerLevel, adventurerUpgrades) => {
+    let damage = adventurerLevel
+    for (let i = 0; i < adventurerUpgrades; i++) {
+      damage *= UPGRADE_CONFIG.adventurer.OneTimePurchases.OTPModifiers[i]
+    }
+    return damage
+  },
+)
+export const selectWarriorDamage = createSelector()
 export const selectClickDamage = (state: RootState) =>
   playerCalc.clickDamage(
     state.player.clickLevel,
@@ -235,16 +246,6 @@ export const selectDotDamage = (state: RootState) =>
     1 + state.player.pDamageUpgradeCount * prestigeDamage,
     1 + state.player.achievementModifier,
   )
-export const selectAdventurerDamage = createSelector(
-  [selectClickLevel, (state: RootState) => state.player.clickMultiUpgradeCount],
-  (adventurerLevel, adventurerUpgrades) => {
-    let damage = adventurerLevel
-    for (let i = 0; i < adventurerUpgrades; i++) {
-      damage *= UPGRADE_CONFIG.adventurer.OneTimePurchases.OTPModifiers[i]
-    }
-    return damage
-  },
-)
 
 export const selectClickLevelUpCost = (state: RootState) => UPGRADE_CONFIG.click.levelUpCost(state.player.clickLevel)
 export const selectDotLevelUpCost = (state: RootState) => UPGRADE_CONFIG.dot.levelUpCost(state.player.dotLevel)
