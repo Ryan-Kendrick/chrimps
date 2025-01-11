@@ -3,21 +3,22 @@ import type { PayloadAction } from "@reduxjs/toolkit"
 import { AppDispatch, type RootState } from "./store"
 import { PlayerState, Tab } from "../models/player"
 import { playerCalc, UPGRADE_CONFIG } from "../gameconfig/upgrades"
-import { setInitElementMap } from "../gameconfig/utils"
-import { PrestigeState, PrestigeUpgradeName, UpgradeIdWithLevel, UpgradeKey } from "../models/upgrades"
+import { heroDamageMap, setInitElementMap } from "../gameconfig/utils"
+import { PrestigeState, PrestigeUpgradeName, UpgradeIdWithLevel, HeroName } from "../models/upgrades"
 import { prestigeReset } from "./shared/actions"
 import { ACHIEVEMENTS } from "../gameconfig/achievements"
 import { checkAchievementUnlock } from "./shared/helpers"
 
 const debugState: PlayerState = {
-  clickLevel: 500,
-  clickMultiUpgradeCount: 3,
-  dotLevel: 500,
-  dotMultiUpgradeCount: 3,
+  adventurerLevel: 500,
+  adventurerMultiUpgradeCount: 3,
+  warriorLevel: 500,
+  warriorMultiUpgradeCount: 3,
   gold: 1000000,
   plasma: 1000000,
   achievementModifier: 0,
 
+  activeHeroes: ["adventurer", "warrior"],
   plasmaReserved: 0,
   hasInitClickMulti1: false,
   hasInitClickMulti2: false,
@@ -36,13 +37,14 @@ const debugState: PlayerState = {
 }
 
 const initialState: PlayerState = {
-  clickLevel: 1,
-  clickMultiUpgradeCount: 0,
-  dotLevel: 0,
-  dotMultiUpgradeCount: 0,
+  adventurerLevel: 1,
+  adventurerMultiUpgradeCount: 0,
+  warriorLevel: 0,
+  warriorMultiUpgradeCount: 0,
   gold: 0,
   achievementModifier: 0,
 
+  activeHeroes: ["adventurer"],
   plasmaReserved: 0,
   // Prevents animation triggering again on mount
   hasInitClickMulti1: false,
@@ -67,17 +69,18 @@ export const playerSlice = createSlice({
   name: "player",
   initialState,
   reducers: {
-    incrementClickLevel: (state) => {
-      state.clickLevel++
+    incrementAdventurerLevel: (state) => {
+      state.adventurerLevel++
     },
-    incrementClickMultiUpgradeCount: (state) => {
-      state.clickMultiUpgradeCount++
+    incrementAdventurerMultiUpgradeCount: (state) => {
+      state.adventurerMultiUpgradeCount++
     },
-    incrementDotLevel: (state) => {
-      state.dotLevel++
+    incrementWarriorLevel: (state) => {
+      if (!state.activeHeroes.includes("warrior")) state.activeHeroes.push("warrior")
+      state.warriorLevel++
     },
-    incrementDotMultiUpgradeCount: (state) => {
-      state.dotMultiUpgradeCount++
+    incrementWarriorMultiUpgradeCount: (state) => {
+      state.warriorMultiUpgradeCount++
     },
     increaseGold(state, action: PayloadAction<number>) {
       state.gold += action.payload
@@ -117,14 +120,14 @@ export const playerSlice = createSlice({
       const payloadValue = Math.round(action.payload * 100)
       state.achievementModifier = (currentValue + payloadValue) / 100
     },
-    initialiseElement(state, action: PayloadAction<UpgradeIdWithLevel | UpgradeKey>) {
+    initialiseElement(state, action: PayloadAction<UpgradeIdWithLevel | HeroName>) {
       setInitElementMap[action.payload](state)
     },
     setTabInView: (state, action: PayloadAction<Tab>) => {
       state.tabInView = action.payload
     },
     toggleDebugState: (state) => {
-      if (state.clickLevel < 500) {
+      if (state.adventurerLevel < 500) {
         return (state = debugState)
       } else {
         return (state = { ...initialState, gold: 1000000, plasma: 1000000 })
@@ -133,12 +136,13 @@ export const playerSlice = createSlice({
   },
   extraReducers(builder) {
     builder.addCase(prestigeReset, (state, action: PayloadAction<Record<PrestigeUpgradeName, PrestigeState>>) => {
-      state.clickLevel = 1
-      state.clickMultiUpgradeCount = 0
-      state.dotLevel = 0
-      state.dotMultiUpgradeCount = 0
+      state.adventurerLevel = 1
+      state.adventurerMultiUpgradeCount = 0
+      state.warriorLevel = 0
+      state.warriorMultiUpgradeCount = 0
       state.gold = 0
       state.plasmaSpent += state.plasmaReserved
+      state.activeHeroes = ["adventurer"]
       state.plasmaReserved = 0
       state.hasInitClickMulti1 = false
       state.hasInitClickMulti2 = false
@@ -158,10 +162,10 @@ export const playerSlice = createSlice({
 })
 
 export const {
-  incrementClickLevel,
-  incrementClickMultiUpgradeCount,
-  incrementDotLevel,
-  incrementDotMultiUpgradeCount,
+  incrementAdventurerLevel,
+  incrementAdventurerMultiUpgradeCount,
+  incrementWarriorLevel,
+  incrementWarriorMultiUpgradeCount,
   increaseGold,
   decreaseGold,
   increasePlasma,
@@ -177,10 +181,10 @@ export const {
 } = playerSlice.actions
 
 export const selectPlayerState = createSelector([(state: RootState) => state.player], (player) => ({
-  clickLevel: player.clickLevel,
-  clickMultiUpgradeCount: player.clickMultiUpgradeCount,
-  dotLevel: player.dotLevel,
-  dotMultiUpgradeCount: player.dotMultiUpgradeCount,
+  clickLevel: player.adventurerLevel,
+  clickMultiUpgradeCount: player.adventurerMultiUpgradeCount,
+  dotLevel: player.warriorLevel,
+  dotMultiUpgradeCount: player.warriorMultiUpgradeCount,
   startDate: player.startDate,
 }))
 
@@ -212,7 +216,7 @@ export const selectInitState = createSelector(
   }),
 )
 
-export const selectClickLevel = (state: RootState) => state.player.clickLevel
+export const selectAdventurerLevel = (state: RootState) => state.player.adventurerLevel
 export const selectGold = (state: RootState) => state.player.gold
 export const selectGCanAfford = (cost: number) => createSelector([selectGold], (gold) => gold >= cost)
 export const selectPlasma = (state: RootState) => state.player.plasma
@@ -222,7 +226,7 @@ export const selectAchievementModifier = (state: RootState) => state.player.achi
 
 const prestigeDamage = UPGRADE_CONFIG.prestige.find((pUpgrade) => pUpgrade.id === "damage")!.modifier
 export const selectAdventurerDamage = createSelector(
-  [selectClickLevel, (state: RootState) => state.player.clickMultiUpgradeCount],
+  [selectAdventurerLevel, (state: RootState) => state.player.adventurerMultiUpgradeCount],
   (adventurerLevel, adventurerUpgrades) => {
     let damage = adventurerLevel
     for (let i = 0; i < adventurerUpgrades; i++) {
@@ -231,24 +235,45 @@ export const selectAdventurerDamage = createSelector(
     return damage
   },
 )
-export const selectWarriorDamage = createSelector()
+export const selectWarriorDamage = createSelector(
+  [(state: RootState) => state.player.warriorLevel, (state: RootState) => state.player.warriorMultiUpgradeCount],
+  (warriorLevel, warriorUpgrades) => {
+    let damage = warriorLevel
+    for (let i = 0; i < warriorUpgrades; i++) {
+      damage *= UPGRADE_CONFIG.warrior.OneTimePurchases.OTPModifiers[i]
+    }
+    return damage
+  },
+)
 export const selectClickDamage = (state: RootState) =>
   playerCalc.clickDamage(
-    state.player.clickLevel,
-    state.player.clickMultiUpgradeCount,
+    state.player.adventurerLevel,
+    state.player.adventurerMultiUpgradeCount,
     1 + state.player.pDamageUpgradeCount * prestigeDamage,
     1 + state.player.achievementModifier,
   )
-export const selectDotDamage = (state: RootState) =>
-  playerCalc.dotDamage(
-    state.player.dotLevel,
-    state.player.dotMultiUpgradeCount,
-    1 + state.player.pDamageUpgradeCount * prestigeDamage,
-    1 + state.player.achievementModifier,
-  )
+export const selectDotDamage = (state: RootState) => {
+  type HeroStats = { level: number; upgradeCount: number }
 
-export const selectClickLevelUpCost = (state: RootState) => UPGRADE_CONFIG.click.levelUpCost(state.player.clickLevel)
-export const selectDotLevelUpCost = (state: RootState) => UPGRADE_CONFIG.dot.levelUpCost(state.player.dotLevel)
+  const activeHeroStats = [] as HeroStats[]
+
+  for (const hero of state.player.activeHeroes) {
+    const thisHeroStats = heroDamageMap[hero](state)
+    activeHeroStats.push(thisHeroStats)
+  }
+
+  playerCalc.heroDamage(
+    state.player.activeHeroes,
+    activeHeroStats,
+    1 + state.player.pDamageUpgradeCount * prestigeDamage,
+    1 + state.player.achievementModifier,
+  )
+}
+
+export const selectAdventurerLevelUpCost = (state: RootState) =>
+  UPGRADE_CONFIG.adventurer.levelUpCost(state.player.adventurerLevel)
+export const selectWarriorLevelUpCost = (state: RootState) =>
+  UPGRADE_CONFIG.warrior.levelUpCost(state.player.warriorLevel)
 
 export const selectTabInView = (state: RootState) => state.player.tabInView
 export const selectPrestigeTabVisible = createSelector(
@@ -258,11 +283,11 @@ export const selectPrestigeTabVisible = createSelector(
 
 export const updateClickDamage = (whatChanged: string) => (dispatch: AppDispatch, getState: () => RootState) => {
   switch (whatChanged) {
-    case "levelup":
-      dispatch(incrementClickLevel())
+    case "adventurer-levelup":
+      dispatch(incrementAdventurerLevel())
       break
-    case "multi":
-      dispatch(incrementClickMultiUpgradeCount())
+    case "adventurer-multi":
+      dispatch(incrementAdventurerMultiUpgradeCount())
       break
     case "pDamage":
       break
@@ -281,11 +306,11 @@ export const updateClickDamage = (whatChanged: string) => (dispatch: AppDispatch
 
 export const updateDotDamage = (whatChanged: string) => (dispatch: AppDispatch, getState: () => RootState) => {
   switch (whatChanged) {
-    case "levelup":
-      dispatch(incrementDotLevel())
+    case "warrior-levelup":
+      dispatch(incrementWarriorLevel())
       break
-    case "multi":
-      dispatch(incrementDotMultiUpgradeCount())
+    case "warrior-multi":
+      dispatch(incrementWarriorMultiUpgradeCount())
       break
     case "pDamage":
       break

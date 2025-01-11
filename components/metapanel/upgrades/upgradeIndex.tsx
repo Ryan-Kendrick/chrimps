@@ -4,16 +4,17 @@ import {
   selectGCanAfford,
   selectClickDamage,
   selectDotDamage,
-  selectClickLevelUpCost,
-  selectDotLevelUpCost,
+  selectAdventurerLevelUpCost,
+  selectWarriorLevelUpCost,
   selectGold,
   updateDotDamage,
   updateClickDamage,
   selectAdventurerDamage,
+  selectWarriorDamage,
 } from "../../../redux/playerSlice"
 import { ClickMultiIcon1, ClickMultiIcon2, ClickMultiIcon3 } from "../../../assets/svg/clickIcons"
 import { UPGRADE_CONFIG } from "../../../gameconfig/upgrades"
-import { UpgradeKey } from "../../../models/upgrades"
+import { HeroName } from "../../../models/upgrades"
 import UpgradePane from "./upgradePane"
 import Currency from "../currency"
 import { GoldIcon } from "../../../assets/svg/resourceIcons"
@@ -24,27 +25,28 @@ export default function UpgradeIndex() {
   const clickDamage = useAppSelector(selectClickDamage)
   const adventurerDamage = useAppSelector(selectAdventurerDamage)
   const dotDamage = useAppSelector(selectDotDamage)
-  const clickLevelUpCost = useAppSelector(selectClickLevelUpCost)
-  const dotLevelUpCost = useAppSelector(selectDotLevelUpCost)
+  const warriorDamage = useAppSelector(selectWarriorDamage)
+  const clickLevelUpCost = useAppSelector(selectAdventurerLevelUpCost)
+  const warriorLevelUpCost = useAppSelector(selectWarriorLevelUpCost)
   const goldSelector = selectGold
 
   const LevelUp = {
     adventurer: {
       cost: clickLevelUpCost,
       canAfford: useAppSelector(selectGCanAfford(clickLevelUpCost)),
-      action: updateClickDamage("levelup"),
+      action: updateClickDamage("adventurer-levelup"),
     },
     warrior: {
-      cost: dotLevelUpCost,
-      canAfford: useAppSelector(selectGCanAfford(dotLevelUpCost)),
-      action: updateDotDamage("levelup"),
+      cost: warriorLevelUpCost,
+      canAfford: useAppSelector(selectGCanAfford(warriorLevelUpCost)),
+      action: updateDotDamage("warrior-levelup"),
     },
     healer: {},
     mage: {},
   }
 
   function onLevelup(e: React.MouseEvent<HTMLButtonElement>) {
-    const levelUpId = e.currentTarget.id as UpgradeKey
+    const levelUpId = e.currentTarget.id as HeroName
 
     const { cost, canAfford, action } = LevelUp[levelUpId]
 
@@ -64,8 +66,8 @@ export default function UpgradeIndex() {
   ) {
     const [upgradeId, purchasedUpgradeLevel] = e.currentTarget.id.split(".")
     const upgradeActions = {
-      "click-multi": updateClickDamage("multi"),
-      "dot-multi": updateDotDamage("multi"),
+      "click-multi": updateClickDamage("adventurer-multi"),
+      "dot-multi": updateDotDamage("warrior-multi"),
     }
 
     if (isAffordable && !hidden) {

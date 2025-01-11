@@ -4,13 +4,13 @@ import { useAppDispatch, useAppSelector } from "../../../redux/hooks"
 import {
   initialiseElement,
   selectGCanAfford,
-  selectClickLevelUpCost,
-  selectDotLevelUpCost,
+  selectAdventurerLevelUpCost,
+  selectWarriorLevelUpCost,
   selectPlayerState,
 } from "../../../redux/playerSlice"
 import MultiplierUpgrade from "./multiplierUpgrade"
 import { UPGRADE_CONFIG } from "../../../gameconfig/upgrades"
-import { Upgrade, UpgradeIdWithLevel, UpgradeKey, UpgradeProps } from "../../../models/upgrades"
+import { Upgrade, UpgradeIdWithLevel, HeroName, UpgradeProps } from "../../../models/upgrades"
 import LevelUpButton from "./levelUpButton"
 import { selectCurrentZoneNumber } from "../../../redux/zoneSlice"
 import { initSelectorMap } from "../../../gameconfig/utils"
@@ -26,7 +26,7 @@ interface UpgradePaneProps {
 export default function UpgradePane({ config, damage, multiIcons, onUpgrade, onLevelUp }: UpgradePaneProps) {
   const dispatch = useAppDispatch()
   const [upgradeName] = config.elementId.split("-")
-  const thisUpgradeName = upgradeName as UpgradeKey
+  const thisUpgradeName = upgradeName as HeroName
 
   const { clickLevel, clickMultiUpgradeCount, dotLevel, dotMultiUpgradeCount } = useAppSelector(selectPlayerState)
 
@@ -34,12 +34,12 @@ export default function UpgradePane({ config, damage, multiIcons, onUpgrade, onL
     click: {
       level: clickLevel,
       upgradeCount: clickMultiUpgradeCount,
-      levelUpCost: useAppSelector(selectClickLevelUpCost),
+      levelUpCost: useAppSelector(selectAdventurerLevelUpCost),
     },
     dot: {
       level: dotLevel,
       upgradeCount: dotMultiUpgradeCount,
-      levelUpCost: useAppSelector(selectDotLevelUpCost),
+      levelUpCost: useAppSelector(selectWarriorLevelUpCost),
     },
   }
   const thisUpgradeProps = upgradeProps[thisUpgradeName]

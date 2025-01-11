@@ -41,6 +41,8 @@ export interface Upgrade {
   elementId: UpgradeId
   displayName: string
   displayStat: string
+  baseDamage: number
+  levelUpMod: number
   OneTimePurchases: OTPConfig
   levelUpCost: (currentLevel: number) => number
 }
@@ -56,13 +58,20 @@ export interface UpgradeConfig {
 
 export interface PlayerCalc {
   clickDamage: (clickLevel: number, clickMulti: number, pDamage: number, achievementModifier: number) => number
-  dotDamage: (dotLevel: number, dotMulti: number, pDamage: number, achievementModifier: number) => number
+  heroDamage: (
+    heroName: HeroName | HeroName[],
+    heroStats: HeroStats | HeroStats[],
+    pDamage: number,
+    achievementModifier: number,
+  ) => number
 }
 
-export type UpgradeKey = "adventurer" | "warrior" | "healer" | "mage"
+export type HeroName = "adventurer" | "warrior" | "healer" | "mage"
+
+export type HeroStats = { level: number; upgradeCount: number }
 
 export type UpgradeProps = {
-  [key in UpgradeKey]: {
+  [key in HeroName]: {
     level: number
     upgradeCount: number
     levelUpCost: number

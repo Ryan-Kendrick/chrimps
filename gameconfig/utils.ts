@@ -1,14 +1,29 @@
 // @ts-nocheck
 
 import { useEffect, useState } from "react"
-import { PrestigeUpgradeConfig, PrestigeUpgradeName, UpgradeIdWithLevel, UpgradeKey } from "../models/upgrades"
+import { PrestigeUpgradeConfig, PrestigeUpgradeName, UpgradeIdWithLevel, HeroName, HeroStats } from "../models/upgrades"
 import { RootState } from "../redux/store"
 import { PlayerState } from "../models/player"
 import { selectInitState, selectPrestigeState } from "../redux/playerSlice"
 import * as LZString from "lz-string"
 import { METADATA_CONFIG } from "./meta"
 
-export const setInitElementMap: Record<UpgradeIdWithLevel | UpgradeKey, (state: PlayerState) => boolean> = {
+export const heroDamageMap: Record<HeroName, (state: RootState) => HeroStats> = {
+  adventurer: (state) => {
+    return { level: state.player.adventurerLevel, upgradeCount: state.player.adventurerMultiUpgradeCount }
+  },
+  warrior: (state) => {
+    return { level: state.player.warriorLevel, upgradeCount: state.player.warriorMultiUpgradeCount }
+  },
+  healer: (state) => {
+    return { level: state.player.healerLevel, upgradeCount: state.player.healerMultiUpgradeCount }
+  },
+  mage: (state) => {
+    return { level: state.player.mageLevel, upgradeCount: state.player.mageMultiUpgradeCount }
+  },
+}
+
+export const setInitElementMap: Record<UpgradeIdWithLevel | HeroName, (state: PlayerState) => boolean> = {
   "click-multi.1": (state) => {
     state.hasInitClickMulti1 = true
   },
@@ -33,7 +48,7 @@ export const setInitElementMap: Record<UpgradeIdWithLevel | UpgradeKey, (state: 
   click: (state) => true,
 }
 
-export const initSelectorMap: Record<UpgradeIdWithLevel | UpgradeKey, (state: RootState) => boolean> = {
+export const initSelectorMap: Record<UpgradeIdWithLevel | HeroName, (state: RootState) => boolean> = {
   "click-multi.1": (state) => selectInitState(state).hasInitClickMulti1,
   "click-multi.2": (state) => selectInitState(state).hasInitClickMulti2,
   "click-multi.3": (state) => selectInitState(state).hasInitClickMulti3,

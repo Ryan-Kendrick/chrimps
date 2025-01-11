@@ -1,3 +1,5 @@
+import { HeroName } from "./upgrades"
+
 export type Tab = "upgrade" | "prestige"
 
 export interface TabData {
@@ -7,15 +9,16 @@ export interface TabData {
 }
 
 export interface PlayerState {
-  clickLevel: number
-  clickMultiUpgradeCount: number
-  dotLevel: number
-  dotMultiUpgradeCount: number
+  adventurerLevel: number
+  adventurerMultiUpgradeCount: number
+  warriorLevel: number
+  warriorMultiUpgradeCount: number
   gold: number
   plasma: number
   plasmaReserved: number
   achievementModifier: number
 
+  activeHeroes: HeroName[]
   hasInitClickMulti1: boolean
   hasInitClickMulti2: boolean
   hasInitClickMulti3: boolean
