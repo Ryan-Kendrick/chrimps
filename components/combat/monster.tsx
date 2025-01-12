@@ -5,7 +5,7 @@ import {
   increasePlasma,
   selectClickDamage,
   selectDotDamage,
-  selectPlayerState,
+  selectHeroState,
 } from "../../redux/playerSlice"
 import { monsterSlice, selectMonsterAlive, selectMonsterState, spawnMonster } from "../../redux/monsterSlice"
 import {
@@ -24,7 +24,7 @@ import { clearCatchUpTime, saveGame, selectLastSaveCatchUp, selectLoading, setLo
 export default function Monster({ children }: PropsWithChildren) {
   const dispatch = useAppDispatch()
 
-  const { adventurerLevel: clickLevel } = useAppSelector(selectPlayerState)
+  const { adventurerLevel: clickLevel } = useAppSelector(selectHeroState)
   const clickDamage = useAppSelector(selectClickDamage)
   const dotDamage = useAppSelector(selectDotDamage)
   const lastSaveCatchUp = useAppSelector(selectLastSaveCatchUp)

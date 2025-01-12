@@ -8,6 +8,25 @@ import { selectInitState, selectPrestigeState } from "../redux/playerSlice"
 import * as LZString from "lz-string"
 import { METADATA_CONFIG } from "./meta"
 
+export const heroStateMap: Record<HeroName, { level: keyof PlayerState; upgradeCount: keyof PlayerState }> = {
+  adventurer: {
+    level: "adventurerLevel",
+    upgradeCount: "adventurerMultiUpgradeCount",
+  },
+  warrior: {
+    level: "warriorLevel",
+    upgradeCount: "warriorMultiUpgradeCount",
+  },
+  healer: {
+    level: "adventurerLevel",
+    upgradeCount: "adventurerMultiUpgradeCount",
+  },
+  mage: {
+    level: "adventurerLevel",
+    upgradeCount: "adventurerMultiUpgradeCount",
+  },
+} as const
+
 export const heroDamageMap: Record<HeroName, (state: RootState) => HeroStats> = {
   adventurer: (state) => {
     return { level: state.player.adventurerLevel, upgradeCount: state.player.adventurerMultiUpgradeCount }
@@ -22,6 +41,8 @@ export const heroDamageMap: Record<HeroName, (state: RootState) => HeroStats> = 
     return { level: state.player.mageLevel, upgradeCount: state.player.mageMultiUpgradeCount }
   },
 }
+
+export const 
 
 export const setInitElementMap: Record<UpgradeIdWithLevel | HeroName, (state: PlayerState) => boolean> = {
   "click-multi.1": (state) => {

@@ -6,7 +6,11 @@ import {
   selectGCanAfford,
   selectAdventurerLevelUpCost,
   selectWarriorLevelUpCost,
-  selectPlayerState,
+  selectHeroState,
+  selectAdventurerState,
+  selectWarriorState,
+  selectHealerState,
+  selectMageState,
 } from "../../../redux/playerSlice"
 import MultiplierUpgrade from "./multiplierUpgrade"
 import { UPGRADE_CONFIG } from "../../../gameconfig/upgrades"
@@ -28,19 +32,22 @@ export default function UpgradePane({ config, damage, multiIcons, onUpgrade, onL
   const [upgradeName] = config.elementId.split("-")
   const thisUpgradeName = upgradeName as HeroName
 
-  const { adventurerLevel, adventurerMultiUpgradeCount, dotLevel, dotMultiUpgradeCount } =
-    useAppSelector(selectPlayerState)
-
   const upgradeProps: UpgradeProps = {
     adventurer: {
-      level: adventurerLevel,
-      upgradeCount: adventurerMultiUpgradeCount,
+      ...useAppSelector(selectAdventurerState),
       levelUpCost: useAppSelector(selectAdventurerLevelUpCost),
     },
     warrior: {
-      level: dotLevel,
-      upgradeCount: dotMultiUpgradeCount,
+      ...useAppSelector(selectWarriorState),
       levelUpCost: useAppSelector(selectWarriorLevelUpCost),
+    },
+    healer: {
+      ...useAppSelector(selectHealerState),
+      levelUpCost: useAppSelector(selectAdventurerLevelUpCost),
+    },
+    mage: {
+      ...useAppSelector(selectMageState),
+      levelUpCost: useAppSelector(selectAdventurerLevelUpCost),
     },
   }
   const thisUpgradeProps = upgradeProps[thisUpgradeName]

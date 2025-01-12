@@ -3,7 +3,7 @@ import type { PayloadAction } from "@reduxjs/toolkit"
 import { AppDispatch, type RootState } from "./store"
 import { PlayerState, Tab } from "../models/player"
 import { playerCalc, UPGRADE_CONFIG } from "../gameconfig/upgrades"
-import { heroDamageMap, setInitElementMap } from "../gameconfig/utils"
+import { heroDamageMap, heroStateMap, setInitElementMap } from "../gameconfig/utils"
 import { PrestigeState, PrestigeUpgradeName, UpgradeIdWithLevel, HeroName } from "../models/upgrades"
 import { prestigeReset } from "./shared/actions"
 import { ACHIEVEMENTS } from "../gameconfig/achievements"
@@ -181,16 +181,26 @@ export const {
   toggleDebugState,
 } = playerSlice.actions
 
-export const selectPlayerState = createSelector(
+export const selectHeroState = createSelector(
   [(state: RootState) => state.player],
-  ({ adventurerLevel, adventurerMultiUpgradeCount, warriorLevel, warriorMultiUpgradeCount, startDate }) => ({
+  ({ adventurerLevel, adventurerMultiUpgradeCount, warriorLevel, warriorMultiUpgradeCount }) => ({
     adventurerLevel,
     adventurerMultiUpgradeCount,
     warriorLevel,
     warriorMultiUpgradeCount,
-    startDate,
   }),
 )
+
+export const createHeroSelector = (heroName: HeroName) =>
+  createSelector([(state: RootState) => state.player], (player) => ({
+    level: player[heroStateMap[heroName].level] as number,
+    upgradeCount: player[heroStateMap[heroName].upgradeCount] as number,
+  }))
+
+export const selectAdventurerState = createHeroSelector("adventurer")
+export const selectWarriorState = createHeroSelector("warrior")
+export const selectHealerState = createHeroSelector("healer")
+export const selectMageState = createHeroSelector("mage")
 
 export const selectPrestigeState = createSelector([(state: RootState) => state.player], (player) => ({
   plasma: player.plasma,
