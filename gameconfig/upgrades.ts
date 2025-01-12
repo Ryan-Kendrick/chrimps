@@ -1,4 +1,4 @@
-import { HeroName, PlayerCalc, UpgradeConfig } from "../models/upgrades"
+import { HeroName, HeroStats, PlayerCalc, Upgrade, UpgradeConfig } from "../models/upgrades"
 
 export const UPGRADE_CONFIG: UpgradeConfig = {
   adventurer: {
@@ -124,16 +124,32 @@ export const playerCalc: PlayerCalc = {
   clickDamage: (clickLevel, clickMultiUpgradeCount, pDamage, achievementModifier): number =>
     clickLevel * Math.pow(2, clickMultiUpgradeCount) * pDamage * achievementModifier,
   heroDamage: (heroName, heroStats, pDamage, achievementModifier): number => {
-    // heroLevel * 2 * Math.pow(2, heroUpgradeMultiCount) * pDamage * achievementModifier,
+    let damage = 0
 
     if (Array.isArray(heroName) && Array.isArray(heroStats)) {
-      let damage = 0
-
       for (let i = 0; i < heroName.length; i++) {
-        const {baseDamage, levelUpMod} = UPGRADE_CONFIG[heroName[i]]
-        const {level, upgradeCount} = heroStats[i]
-        damage += 
+        const { baseDamage, levelUpMod, OneTimePurchases } = UPGRADE_CONFIG[heroName[i]]
+        const { level, upgradeCount } = heroStats[i]
+
+        damage += baseDamage + level * levelUpMod
+        const upgradeModifiers = OneTimePurchases.OTPModifiers.slice(0, upgradeCount)
+
+        for (const mod of upgradeModifiers) {
+          damage *= mod
+        }
+      }
+    } else {
+      const { baseDamage, levelUpMod, OneTimePurchases } = UPGRADE_CONFIG[heroName as HeroName]
+      const { level, upgradeCount } = heroStats as HeroStats
+
+      damage += baseDamage + level * levelUpMod
+      const upgradeModifiers = OneTimePurchases.OTPModifiers.slice(0, upgradeCount)
+
+      for (const mod of upgradeModifiers) {
+        damage *= mod
       }
     }
+    damage *= pDamage * achievementModifier
+    return damage
   },
 } as const

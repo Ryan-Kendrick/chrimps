@@ -255,16 +255,16 @@ export const selectClickDamage = (state: RootState) =>
 export const selectDotDamage = (state: RootState) => {
   type HeroStats = { level: number; upgradeCount: number }
 
-  const activeHeroStats = [] as HeroStats[]
+  const activeHeroesStats = [] as HeroStats[]
 
   for (const hero of state.player.activeHeroes) {
     const thisHeroStats = heroDamageMap[hero](state)
-    activeHeroStats.push(thisHeroStats)
+    activeHeroesStats.push(thisHeroStats)
   }
 
   playerCalc.heroDamage(
     state.player.activeHeroes,
-    activeHeroStats,
+    activeHeroesStats,
     1 + state.player.pDamageUpgradeCount * prestigeDamage,
     1 + state.player.achievementModifier,
   )
