@@ -6,13 +6,12 @@ import {
   selectGCanAfford,
   selectAdventurerLevelUpCost,
   selectWarriorLevelUpCost,
-  selectHeroState,
   selectAdventurerState,
   selectWarriorState,
   selectHealerState,
   selectMageState,
 } from "../../../redux/playerSlice"
-import MultiplierUpgrade from "./multiplierUpgrade"
+import OneTimePurchaseUpgrade from "./oneTimePurchase"
 import { UPGRADE_CONFIG } from "../../../gameconfig/upgrades"
 import { Upgrade, UpgradeIdWithLevel, HeroName, UpgradeProps } from "../../../models/upgrades"
 import LevelUpButton from "./levelUpButton"
@@ -22,12 +21,12 @@ import { initSelectorMap } from "../../../gameconfig/utils"
 interface UpgradePaneProps {
   config: Upgrade
   damage: number
-  multiIcons: JSX.Element[]
+  OTPIcons: JSX.Element[]
   onUpgrade: (e: React.MouseEvent<HTMLDivElement>, hidden: boolean, cost: number, isAffordable: boolean) => void
   onLevelUp: (e: React.MouseEvent<HTMLButtonElement>) => void
 }
 
-export default function UpgradePane({ config, damage, multiIcons, onUpgrade, onLevelUp }: UpgradePaneProps) {
+export default function UpgradePane({ config, damage, OTPIcons: OTPIcons, onUpgrade, onLevelUp }: UpgradePaneProps) {
   const dispatch = useAppDispatch()
   const [upgradeName] = config.elementId.split("-")
   const thisUpgradeName = upgradeName as HeroName
@@ -53,8 +52,8 @@ export default function UpgradePane({ config, damage, multiIcons, onUpgrade, onL
   const thisUpgradeProps = upgradeProps[thisUpgradeName]
 
   const canAffordLevelUp = useAppSelector(selectGCanAfford(thisUpgradeProps.levelUpCost))
-  const canAffordMultiUpgrade = useAppSelector(
-    selectGCanAfford(UPGRADE_CONFIG.calcMultiCost(config.elementId, thisUpgradeProps.upgradeCount)),
+  const canAffordOTPUpgrade = useAppSelector(
+    selectGCanAfford(UPGRADE_CONFIG.calcOTPCost(config.elementId, thisUpgradeProps.upgradeCount)),
   )
 
   const currentZoneNumber = useAppSelector(selectCurrentZoneNumber)
@@ -63,13 +62,13 @@ export default function UpgradePane({ config, damage, multiIcons, onUpgrade, onL
   const [isVisible, setIsVisible] = useState(false)
   const [animationComplete, setAnimationComplete] = useState(false)
 
-  const isNotClick = upgradeName !== "click"
+  const isNotAdventurer = upgradeName !== "adventurer"
 
-  const thisSelector = isNotClick ? initSelectorMap[thisUpgradeName] : null
-  const hasInitialised = isNotClick ? thisSelector && useAppSelector(thisSelector) : true
+  const thisSelector = isNotAdventurer ? initSelectorMap[thisUpgradeName] : null
+  const hasInitialised = isNotAdventurer ? thisSelector && useAppSelector(thisSelector) : true
 
   useEffect(() => {
-    if (isNotClick) {
+    if (isNotAdventurer) {
       // If already initialised, skip animation sequence
       if (hasInitialised) setAnimationComplete(true)
       // Once animation is completed, dispatch to store
@@ -89,30 +88,33 @@ export default function UpgradePane({ config, damage, multiIcons, onUpgrade, onL
     }
   }, [currentZoneNumber, config.visibleAtZone, hasInitialised, animationComplete])
 
-  if (!shouldMount && isNotClick) return null
+  if (!shouldMount && isNotAdventurer) return null
 
   return (
     <div
       className={clsx(
-        "flex w-full items-start justify-between align-start py-4 px-4 gap-2 border-amber-950 transition-opacity duration-1000",
-        upgradeName === "click" ? "border-y-2" : "border-b-2",
-        isVisible && isNotClick && "opacity-100",
-        !animationComplete && !isVisible && isNotClick && "opacity-0",
+        "flex w-full items-start justify-between align-start py-4 px-2 md:px-4 xl:px-6 2xl:pr-8 gap-2 shadow-md border-t-purple-950 border-b-purple-950 border-x-2 transition-opacity duration-1000",
+        upgradeName === "adventurer" ? "border-y-2" : "border-b-2",
+        canAffordOTPUpgrade && thisUpgradeProps.level > 10 ? "border-x-gold" : "border-x-yellow-700",
+        isVisible && isNotAdventurer && "opacity-100",
+        !animationComplete && !isVisible && isNotAdventurer && "opacity-0",
         animationComplete && "opacity-100 transition-none",
       )}>
-      <div className="flex flex-col w-40 items-center">
-        <div className="">{config.displayName}</div>
-        <div className="self-center">{Math.round(damage)}</div>
+      <div className="flex gap-1 flex-col w-40 md:w-52 2xl:w-56 items-center text-white font-outline">
+        <div className="text-2xl">{config.displayName}</div>
+        <div className="self-center">
+          {config.displayStat}: <span className="">{Math.round(damage)}</span>
+        </div>
         <div className="flex gap-2.5 pt-1">
-          {multiIcons.map((icon, i) => (
-            <MultiplierUpgrade
+          {OTPIcons.map((icon, i) => (
+            <OneTimePurchaseUpgrade
               key={upgradeName + i}
               id={`${config.elementId}.${i + 1}` as UpgradeIdWithLevel}
               onClick={onUpgrade}
               icon={icon}
               hidden={i === 0 ? thisUpgradeProps.level < 10 : thisUpgradeProps.upgradeCount < i}
               cost={thisUpgradeProps.levelUpCost}
-              isAffordable={canAffordMultiUpgrade}
+              isAffordable={canAffordOTPUpgrade}
               isPurchased={thisUpgradeProps.upgradeCount > i}
             />
           ))}

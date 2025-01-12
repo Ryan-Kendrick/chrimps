@@ -10,9 +10,9 @@ export interface TabData {
 
 export interface PlayerState {
   adventurerLevel: number
-  adventurerMultiUpgradeCount: number
+  adventurerOTPUpgradeCount: number
   warriorLevel: number
-  warriorMultiUpgradeCount: number
+  warriorOTPUpgradeCount: number
   gold: number
   plasma: number
   plasmaReserved: number

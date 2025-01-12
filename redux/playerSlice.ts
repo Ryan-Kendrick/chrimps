@@ -11,9 +11,9 @@ import { checkAchievementUnlock } from "./shared/helpers"
 
 const debugState: PlayerState = {
   adventurerLevel: 500,
-  adventurerMultiUpgradeCount: 3,
+  adventurerOTPUpgradeCount: 3,
   warriorLevel: 500,
-  warriorMultiUpgradeCount: 3,
+  warriorOTPUpgradeCount: 3,
   // TODO: add healer, mage
   gold: 1000000,
   plasma: 1000000,
@@ -39,9 +39,9 @@ const debugState: PlayerState = {
 
 const initialState: PlayerState = {
   adventurerLevel: 1,
-  adventurerMultiUpgradeCount: 0,
+  adventurerOTPUpgradeCount: 0,
   warriorLevel: 0,
-  warriorMultiUpgradeCount: 0,
+  warriorOTPUpgradeCount: 0,
   gold: 0,
   achievementModifier: 0,
 
@@ -73,15 +73,15 @@ export const playerSlice = createSlice({
     incrementAdventurerLevel: (state) => {
       state.adventurerLevel++
     },
-    incrementAdventurerMultiUpgradeCount: (state) => {
-      state.adventurerMultiUpgradeCount++
+    incrementAdventurerOTPUpgradeCount: (state) => {
+      state.adventurerOTPUpgradeCount++
     },
     incrementWarriorLevel: (state) => {
       if (!state.activeHeroes.includes("warrior")) state.activeHeroes.push("warrior")
       state.warriorLevel++
     },
-    incrementWarriorMultiUpgradeCount: (state) => {
-      state.warriorMultiUpgradeCount++
+    incrementWarriorOTPUpgradeCount: (state) => {
+      state.warriorOTPUpgradeCount++
     },
     increaseGold(state, action: PayloadAction<number>) {
       state.gold += action.payload
@@ -138,9 +138,9 @@ export const playerSlice = createSlice({
   extraReducers(builder) {
     builder.addCase(prestigeReset, (state, action: PayloadAction<Record<PrestigeUpgradeName, PrestigeState>>) => {
       state.adventurerLevel = 1
-      state.adventurerMultiUpgradeCount = 0
+      state.adventurerOTPUpgradeCount = 0
       state.warriorLevel = 0
-      state.warriorMultiUpgradeCount = 0
+      state.warriorOTPUpgradeCount = 0
       state.gold = 0
       state.plasmaSpent += state.plasmaReserved
       state.activeHeroes = ["adventurer"]
@@ -164,9 +164,9 @@ export const playerSlice = createSlice({
 
 export const {
   incrementAdventurerLevel,
-  incrementAdventurerMultiUpgradeCount,
+  incrementAdventurerOTPUpgradeCount,
   incrementWarriorLevel,
-  incrementWarriorMultiUpgradeCount,
+  incrementWarriorOTPUpgradeCount,
   increaseGold,
   decreaseGold,
   increasePlasma,
@@ -183,11 +183,11 @@ export const {
 
 export const selectHeroState = createSelector(
   [(state: RootState) => state.player],
-  ({ adventurerLevel, adventurerMultiUpgradeCount, warriorLevel, warriorMultiUpgradeCount }) => ({
+  ({ adventurerLevel, adventurerOTPUpgradeCount, warriorLevel, warriorOTPUpgradeCount }) => ({
     adventurerLevel,
-    adventurerMultiUpgradeCount,
+    adventurerOTPUpgradeCount,
     warriorLevel,
-    warriorMultiUpgradeCount,
+    warriorOTPUpgradeCount,
   }),
 )
 
@@ -240,7 +240,7 @@ export const selectAchievementModifier = (state: RootState) => state.player.achi
 
 const prestigeDamage = UPGRADE_CONFIG.prestige.find((pUpgrade) => pUpgrade.id === "damage")!.modifier
 export const selectAdventurerDamage = createSelector(
-  [selectAdventurerLevel, (state: RootState) => state.player.adventurerMultiUpgradeCount],
+  [selectAdventurerLevel, (state: RootState) => state.player.adventurerOTPUpgradeCount],
   (adventurerLevel, adventurerUpgrades) => {
     let damage = adventurerLevel
     for (let i = 0; i < adventurerUpgrades; i++) {
@@ -250,7 +250,7 @@ export const selectAdventurerDamage = createSelector(
   },
 )
 export const selectWarriorDamage = createSelector(
-  [(state: RootState) => state.player.warriorLevel, (state: RootState) => state.player.warriorMultiUpgradeCount],
+  [(state: RootState) => state.player.warriorLevel, (state: RootState) => state.player.warriorOTPUpgradeCount],
   (warriorLevel, warriorUpgrades) => {
     let damage = warriorLevel
     for (let i = 0; i < warriorUpgrades; i++) {
@@ -262,11 +262,13 @@ export const selectWarriorDamage = createSelector(
 export const selectClickDamage = (state: RootState): number =>
   playerCalc.clickDamage(
     state.player.adventurerLevel,
-    state.player.adventurerMultiUpgradeCount,
+    state.player.adventurerOTPUpgradeCount,
     1 + state.player.pDamageUpgradeCount * prestigeDamage,
     1 + state.player.achievementModifier,
   )
+
 export const selectDotDamage = (state: RootState): number => {
+  if (state.player.activeHeroes.length < 2) return 0
   type HeroStats = { level: number; upgradeCount: number }
 
   const activeHeroesStats = [] as HeroStats[]
@@ -300,8 +302,8 @@ export const updateClickDamage = (whatChanged: string) => (dispatch: AppDispatch
     case "adventurer-levelup":
       dispatch(incrementAdventurerLevel())
       break
-    case "adventurer-multi":
-      dispatch(incrementAdventurerMultiUpgradeCount())
+    case "adventurer-otp":
+      dispatch(incrementAdventurerOTPUpgradeCount())
       break
     case "pDamage":
       break
@@ -323,8 +325,8 @@ export const updateDotDamage = (whatChanged: string) => (dispatch: AppDispatch, 
     case "warrior-levelup":
       dispatch(incrementWarriorLevel())
       break
-    case "warrior-multi":
-      dispatch(incrementWarriorMultiUpgradeCount())
+    case "warrior-otp":
+      dispatch(incrementWarriorOTPUpgradeCount())
       break
     case "pDamage":
       break

@@ -93,7 +93,7 @@ export const UPGRADE_CONFIG: UpgradeConfig = {
       return Math.floor(base * (1 + Math.log10(currentLevel + 1)) * Math.pow(growthRate, currentLevel))
     },
   },
-  calcMultiCost: function (upgradeName, upgradeCount) {
+  calcOTPCost: function (upgradeName, upgradeCount) {
     const costs = {
       "adventurer-otp": this.adventurer.OneTimePurchases.OTPCosts,
       "warrior-otp": this.warrior.OneTimePurchases.OTPCosts,
@@ -121,8 +121,8 @@ export const UPGRADE_CONFIG: UpgradeConfig = {
 } as const
 
 export const playerCalc: PlayerCalc = {
-  clickDamage: (clickLevel, clickMultiUpgradeCount, pDamage, achievementModifier): number =>
-    clickLevel * Math.pow(2, clickMultiUpgradeCount) * pDamage * achievementModifier,
+  clickDamage: (clickLevel, clickOTPUpgradeCount, pDamage, achievementModifier): number =>
+    clickLevel * Math.pow(2, clickOTPUpgradeCount) * pDamage * achievementModifier,
   heroDamage: (heroName, heroStats, pDamage, achievementModifier): number => {
     let damage = 0
 

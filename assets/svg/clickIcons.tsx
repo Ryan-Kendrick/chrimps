@@ -1,6 +1,6 @@
 import React from "react"
 
-export function ClickMultiIcon1() {
+export function ClickOTPIcon1() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 90" className="w-full h-full">
       <g transform="translate(-5, -10)">
@@ -13,7 +13,7 @@ export function ClickMultiIcon1() {
   )
 }
 
-export function ClickMultiIcon2() {
+export function ClickOTPIcon2() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" className="w-full h-full">
       <g transform="translate(-5, -10) scale(2.81 2.81)">
@@ -38,7 +38,7 @@ export function ClickMultiIcon2() {
   )
 }
 
-export function ClickMultiIcon3() {
+export function ClickOTPIcon3() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" className="w-full h-full">
       <g transform="translate(-5, -10) scale(2.81 2.81)">

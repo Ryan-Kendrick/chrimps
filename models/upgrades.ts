@@ -1,12 +1,6 @@
 export type UpgradeId = "adventurer-otp" | "warrior-otp" | "healer-otp" | "mage-otp"
-export type UpgradeIdWithLevel =
-  | "click-multi.1"
-  | "click-multi.2"
-  | "click-multi.3"
-  | "dot-multi.1"
-  | "dot-multi.2"
-  | "dot-multi.3"
-export type CostKey = "clickMultiCosts" | "dotMultiCosts"
+export type UpgradeIdWithLevel = "click-otp.1" | "click-otp.2" | "click-otp.3" | "dot-otp.1" | "dot-otp.2" | "dot-otp.3"
+export type CostKey = "clickOTPCosts" | "dotOTPCosts"
 
 export interface UpgradeElement {
   upgradeId: UpgradeId
@@ -52,7 +46,7 @@ export interface UpgradeConfig {
   healer: Upgrade
   mage: Upgrade
   prestige: PrestigeUpgradeConfig[]
-  calcMultiCost: (upgradeName: UpgradeId, upgradeCount: number) => number
+  calcOTPCost: (upgradeName: UpgradeId, upgradeCount: number) => number
   calcAdditiveCost: (atLevel: number, prestigeUpgrade: PrestigeUpgradeConfig) => number
 }
 

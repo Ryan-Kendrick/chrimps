@@ -45,7 +45,7 @@ export default function PanelIndex() {
       <div
         className={clsx(
           // Base
-          "flex flex-col relative lg:basis-3/5 radius rounded-b-xl mx-3 lg:m-6 overflow-y-auto",
+          "flex flex-col relative lg:basis-3/5 radius rounded-b-xl mx-3 lg:m-6",
         )}>
         <div style={{ height: `${tabHeight}px` }} className="transition-[height]">
           {prestigeTabVisible && (
@@ -68,7 +68,7 @@ export default function PanelIndex() {
         </div>
         <div
           className={clsx(
-            "h-full shadow-panel rounded-t",
+            "flex flex-col grow shadow-panel rounded-t rounded-b-xl",
             "bg-gradient-to-tr from-amber-400 via-orange-500 to-purple-950",
             "lg:bg-gradient-to-br lg:from-amber-400 lg:via-orange-500 lg:to-purple-950",
           )}>

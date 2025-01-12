@@ -11,71 +11,69 @@ import { METADATA_CONFIG } from "./meta"
 export const heroStateMap: Record<HeroName, { level: keyof PlayerState; upgradeCount: keyof PlayerState }> = {
   adventurer: {
     level: "adventurerLevel",
-    upgradeCount: "adventurerMultiUpgradeCount",
+    upgradeCount: "adventurerOTPUpgradeCount",
   },
   warrior: {
     level: "warriorLevel",
-    upgradeCount: "warriorMultiUpgradeCount",
+    upgradeCount: "warriorOTPUpgradeCount",
   },
   healer: {
     level: "adventurerLevel",
-    upgradeCount: "adventurerMultiUpgradeCount",
+    upgradeCount: "adventurerOTPUpgradeCount",
   },
   mage: {
     level: "adventurerLevel",
-    upgradeCount: "adventurerMultiUpgradeCount",
+    upgradeCount: "adventurerOTPUpgradeCount",
   },
 } as const
 
 export const heroDamageMap: Record<HeroName, (state: RootState) => HeroStats> = {
   adventurer: (state) => {
-    return { level: state.player.adventurerLevel, upgradeCount: state.player.adventurerMultiUpgradeCount }
+    return { level: state.player.adventurerLevel, upgradeCount: state.player.adventurerOTPUpgradeCount }
   },
   warrior: (state) => {
-    return { level: state.player.warriorLevel, upgradeCount: state.player.warriorMultiUpgradeCount }
+    return { level: state.player.warriorLevel, upgradeCount: state.player.warriorOTPUpgradeCount }
   },
   healer: (state) => {
-    return { level: state.player.healerLevel, upgradeCount: state.player.healerMultiUpgradeCount }
+    return { level: state.player.healerLevel, upgradeCount: state.player.healerOTPUpgradeCount }
   },
   mage: (state) => {
-    return { level: state.player.mageLevel, upgradeCount: state.player.mageMultiUpgradeCount }
+    return { level: state.player.mageLevel, upgradeCount: state.player.mageOTPUpgradeCount }
   },
 }
 
-export const 
-
 export const setInitElementMap: Record<UpgradeIdWithLevel | HeroName, (state: PlayerState) => boolean> = {
-  "click-multi.1": (state) => {
+  "adventurer-otp.1": (state) => {
     state.hasInitClickMulti1 = true
   },
-  "click-multi.2": (state) => {
+  "adventurer-otp.2": (state) => {
     state.hasInitClickMulti2 = true
   },
-  "click-multi.3": (state) => {
+  "adventurer-otp.3": (state) => {
     state.hasInitClickMulti3 = true
   },
-  "dot-multi.1": (state) => {
+  "warrior-otp.1": (state) => {
     state.hasInitDotMulti1 = true
   },
-  "dot-multi.2": (state) => {
+  "warrior-otp.2": (state) => {
     state.hasInitDotMulti2 = true
   },
-  "dot-multi.3": (state) => {
+  "warrior-otp.3": (state) => {
     state.hasInitDotMulti3 = true
   },
-  dot: (state) => {
+  warrior: (state) => {
     state.hasInitDotPane = true
   },
-  click: (state) => true,
+  adventurer: (state) => true,
 }
 
 export const initSelectorMap: Record<UpgradeIdWithLevel | HeroName, (state: RootState) => boolean> = {
-  "click-multi.1": (state) => selectInitState(state).hasInitClickMulti1,
-  "click-multi.2": (state) => selectInitState(state).hasInitClickMulti2,
-  "click-multi.3": (state) => selectInitState(state).hasInitClickMulti3,
-  "dot-multi.1": (state) => selectInitState(state).hasInitDotMulti1,
-  "dot-multi.2": (state) => selectInitState(state).hasInitDotMulti2,
-  "dot-multi.3": (state) => selectInitState(state).hasInitDotMulti3,
+  "adventurer-otp.1": (state) => selectInitState(state).hasInitClickMulti1,
+  "adventurer-otp.2": (state) => selectInitState(state).hasInitClickMulti2,
+  "adventurer-otp.3": (state) => selectInitState(state).hasInitClickMulti3,
+  "warrior-otp.1": (state) => selectInitState(state).hasInitDotMulti1,
+  "warrior-otp.2": (state) => selectInitState(state).hasInitDotMulti2,
+  "warrior-otp.3": (state) => selectInitState(state).hasInitDotMulti3,
   dot: (state) => selectInitState(state).hasInitDotPane,
 }
 

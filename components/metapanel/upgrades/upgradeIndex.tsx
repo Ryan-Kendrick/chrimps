@@ -12,7 +12,7 @@ import {
   selectAdventurerDamage,
   selectWarriorDamage,
 } from "../../../redux/playerSlice"
-import { ClickMultiIcon1, ClickMultiIcon2, ClickMultiIcon3 } from "../../../assets/svg/clickIcons"
+import { ClickOTPIcon1, ClickOTPIcon2, ClickOTPIcon3 } from "../../../assets/svg/clickIcons"
 import { UPGRADE_CONFIG } from "../../../gameconfig/upgrades"
 import { HeroName } from "../../../models/upgrades"
 import UpgradePane from "./upgradePane"
@@ -76,8 +76,8 @@ export default function UpgradeIndex() {
   ) {
     const [upgradeId, purchasedUpgradeLevel] = e.currentTarget.id.split(".")
     const upgradeActions = {
-      "click-multi": updateClickDamage("adventurer-multi"),
-      "dot-multi": updateDotDamage("warrior-multi"),
+      "adventurer-otp": updateClickDamage("adventurer-otp"),
+      "warrior-otp": updateDotDamage("warrior-otp"),
     }
 
     if (isAffordable && !hidden) {
@@ -91,24 +91,30 @@ export default function UpgradeIndex() {
   return (
     <>
       <Currency image={GoldIcon()} fontstyle="text-white font-outline-2" currencySelector={goldSelector} />
-      <div>
+      <div className="flex flex-col flex-1">
         <UpgradePane
           config={UPGRADE_CONFIG.adventurer}
           damage={adventurerDamage}
-          multiIcons={[ClickMultiIcon1(), ClickMultiIcon2(), ClickMultiIcon3()]}
+          OTPIcons={[ClickOTPIcon1(), ClickOTPIcon2(), ClickOTPIcon3()]}
           onUpgrade={onUpgrade}
           onLevelUp={onLevelup}
         />
         <UpgradePane
           config={UPGRADE_CONFIG.warrior}
           damage={warriorDamage}
-          multiIcons={[ClickMultiIcon1(), ClickMultiIcon2(), ClickMultiIcon3()]}
+          OTPIcons={[ClickOTPIcon1(), ClickOTPIcon2(), ClickOTPIcon3()]}
           onUpgrade={onUpgrade}
           onLevelUp={onLevelup}
         />
         {dotDamage > 0 && (
-          <div>
-            <h2>Total damage: {dotDamage}</h2>
+          <div className="flex gap mt-auto mb-2">
+            <div className="flex-col text-white place-items-center w-full">
+              <h2 className="text-2xl font-outline">Total</h2>
+              <div className="flex text-lg w-full justify-evenly">
+                <h3>Click Damage: {Math.round(clickDamage)}</h3>
+                <h3>Damage Over Time: {Math.round(dotDamage)}</h3>
+              </div>
+            </div>
           </div>
         )}
       </div>

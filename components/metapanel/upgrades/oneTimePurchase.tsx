@@ -5,7 +5,7 @@ import { initialiseElement } from "../../../redux/playerSlice"
 import { UpgradeIdWithLevel } from "../../../models/upgrades"
 import { initSelectorMap } from "../../../gameconfig/utils"
 
-interface MultiplierProps {
+interface OneTimePurchaseProps {
   id: UpgradeIdWithLevel
   icon: JSX.Element
   onClick: (e: React.MouseEvent<HTMLDivElement>, hidden: boolean, cost: number, isAffordable: boolean) => void
@@ -15,7 +15,7 @@ interface MultiplierProps {
   hidden: boolean
 }
 
-export default function MultiplierUpgrade({
+export default function OneTimePurchaseUpgrade({
   id,
   icon,
   onClick: onUpgrade,
@@ -23,7 +23,7 @@ export default function MultiplierUpgrade({
   cost,
   isAffordable,
   isPurchased,
-}: MultiplierProps) {
+}: OneTimePurchaseProps) {
   const dispatch = useAppDispatch()
 
   const [shouldMount, setShouldMount] = useState(false)
