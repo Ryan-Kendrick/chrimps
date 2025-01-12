@@ -14,6 +14,7 @@ const debugState: PlayerState = {
   adventurerMultiUpgradeCount: 3,
   warriorLevel: 500,
   warriorMultiUpgradeCount: 3,
+  // TODO: add healer, mage
   gold: 1000000,
   plasma: 1000000,
   achievementModifier: 0,
@@ -180,13 +181,16 @@ export const {
   toggleDebugState,
 } = playerSlice.actions
 
-export const selectPlayerState = createSelector([(state: RootState) => state.player], (player) => ({
-  clickLevel: player.adventurerLevel,
-  clickMultiUpgradeCount: player.adventurerMultiUpgradeCount,
-  dotLevel: player.warriorLevel,
-  dotMultiUpgradeCount: player.warriorMultiUpgradeCount,
-  startDate: player.startDate,
-}))
+export const selectPlayerState = createSelector(
+  [(state: RootState) => state.player],
+  ({ adventurerLevel, adventurerMultiUpgradeCount, warriorLevel, warriorMultiUpgradeCount, startDate }) => ({
+    adventurerLevel,
+    adventurerMultiUpgradeCount,
+    warriorLevel,
+    warriorMultiUpgradeCount,
+    startDate,
+  }),
+)
 
 export const selectPrestigeState = createSelector([(state: RootState) => state.player], (player) => ({
   plasma: player.plasma,
@@ -245,14 +249,14 @@ export const selectWarriorDamage = createSelector(
     return damage
   },
 )
-export const selectClickDamage = (state: RootState) =>
+export const selectClickDamage = (state: RootState): number =>
   playerCalc.clickDamage(
     state.player.adventurerLevel,
     state.player.adventurerMultiUpgradeCount,
     1 + state.player.pDamageUpgradeCount * prestigeDamage,
     1 + state.player.achievementModifier,
   )
-export const selectDotDamage = (state: RootState) => {
+export const selectDotDamage = (state: RootState): number => {
   type HeroStats = { level: number; upgradeCount: number }
 
   const activeHeroesStats = [] as HeroStats[]
@@ -262,7 +266,7 @@ export const selectDotDamage = (state: RootState) => {
     activeHeroesStats.push(thisHeroStats)
   }
 
-  playerCalc.heroDamage(
+  return playerCalc.heroDamage(
     state.player.activeHeroes,
     activeHeroesStats,
     1 + state.player.pDamageUpgradeCount * prestigeDamage,

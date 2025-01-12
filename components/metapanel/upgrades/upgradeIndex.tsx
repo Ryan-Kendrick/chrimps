@@ -26,14 +26,14 @@ export default function UpgradeIndex() {
   const adventurerDamage = useAppSelector(selectAdventurerDamage)
   const dotDamage = useAppSelector(selectDotDamage)
   const warriorDamage = useAppSelector(selectWarriorDamage)
-  const clickLevelUpCost = useAppSelector(selectAdventurerLevelUpCost)
+  const adventurerLevelUpCost = useAppSelector(selectAdventurerLevelUpCost)
   const warriorLevelUpCost = useAppSelector(selectWarriorLevelUpCost)
   const goldSelector = selectGold
 
   const LevelUp = {
     adventurer: {
-      cost: clickLevelUpCost,
-      canAfford: useAppSelector(selectGCanAfford(clickLevelUpCost)),
+      cost: adventurerLevelUpCost,
+      canAfford: useAppSelector(selectGCanAfford(adventurerLevelUpCost)),
       action: updateClickDamage("adventurer-levelup"),
     },
     warrior: {
@@ -41,8 +41,18 @@ export default function UpgradeIndex() {
       canAfford: useAppSelector(selectGCanAfford(warriorLevelUpCost)),
       action: updateDotDamage("warrior-levelup"),
     },
-    healer: {},
-    mage: {},
+    healer: {
+      // TODO: replace placeholder values
+      cost: adventurerLevelUpCost,
+      canAfford: useAppSelector(selectGCanAfford(adventurerLevelUpCost)),
+      action: updateClickDamage("adventurer-levelup"),
+    },
+    mage: {
+      // TODO: replace placeholder values
+      cost: adventurerLevelUpCost,
+      canAfford: useAppSelector(selectGCanAfford(adventurerLevelUpCost)),
+      action: updateClickDamage("adventurer-levelup"),
+    },
   }
 
   function onLevelup(e: React.MouseEvent<HTMLButtonElement>) {
@@ -91,11 +101,16 @@ export default function UpgradeIndex() {
         />
         <UpgradePane
           config={UPGRADE_CONFIG.warrior}
-          damage={dotDamage}
+          damage={warriorDamage}
           multiIcons={[ClickMultiIcon1(), ClickMultiIcon2(), ClickMultiIcon3()]}
           onUpgrade={onUpgrade}
           onLevelUp={onLevelup}
         />
+        {dotDamage > 0 && (
+          <div>
+            <h2>Total damage: {dotDamage}</h2>
+          </div>
+        )}
       </div>
     </>
   )

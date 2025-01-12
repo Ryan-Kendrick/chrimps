@@ -24,7 +24,7 @@ import { clearCatchUpTime, saveGame, selectLastSaveCatchUp, selectLoading, setLo
 export default function Monster({ children }: PropsWithChildren) {
   const dispatch = useAppDispatch()
 
-  const { clickLevel } = useAppSelector(selectPlayerState)
+  const { adventurerLevel: clickLevel } = useAppSelector(selectPlayerState)
   const clickDamage = useAppSelector(selectClickDamage)
   const dotDamage = useAppSelector(selectDotDamage)
   const lastSaveCatchUp = useAppSelector(selectLastSaveCatchUp)

@@ -28,15 +28,16 @@ export default function UpgradePane({ config, damage, multiIcons, onUpgrade, onL
   const [upgradeName] = config.elementId.split("-")
   const thisUpgradeName = upgradeName as HeroName
 
-  const { clickLevel, clickMultiUpgradeCount, dotLevel, dotMultiUpgradeCount } = useAppSelector(selectPlayerState)
+  const { adventurerLevel, adventurerMultiUpgradeCount, dotLevel, dotMultiUpgradeCount } =
+    useAppSelector(selectPlayerState)
 
   const upgradeProps: UpgradeProps = {
-    click: {
-      level: clickLevel,
-      upgradeCount: clickMultiUpgradeCount,
+    adventurer: {
+      level: adventurerLevel,
+      upgradeCount: adventurerMultiUpgradeCount,
       levelUpCost: useAppSelector(selectAdventurerLevelUpCost),
     },
-    dot: {
+    warrior: {
       level: dotLevel,
       upgradeCount: dotMultiUpgradeCount,
       levelUpCost: useAppSelector(selectWarriorLevelUpCost),
