@@ -134,7 +134,20 @@ export function loadFromLocalStorage(): RootState | undefined {
 
     console.log("Decompressed from local storage", gameState)
 
-    return { ...gameState, stats: { ...gameState.stats, gameVersion: METADATA_CONFIG.version } }
+    const saveVersion = gameState.meta.gameVersion
+    const saveMinorVersion = saveVersion.split(".")[1]
+    const currentVersion = METADATA_CONFIG.version
+    const currentMinorVersion = currentVersion.split(".")[1]
+
+    console.log(saveVersion)
+    if (saveMinorVersion !== currentMinorVersion) {
+      setTimeout(() => {
+        alert(`Save version ${saveVersion} is not compatible with game version ${currentVersion}. Starting new game.`)
+      }, 100)
+      return undefined
+    }
+
+    return { ...gameState, meta: { ...gameState.meta, gameVersion: METADATA_CONFIG.version } }
   } catch (err) {
     console.error(`Error loading from local storage: ${err}`)
     return undefined
