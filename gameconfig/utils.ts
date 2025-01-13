@@ -139,10 +139,14 @@ export function loadFromLocalStorage(): RootState | undefined {
     const currentVersion = METADATA_CONFIG.version
     const currentMinorVersion = currentVersion.split(".")[1]
 
-    console.log(saveVersion)
     if (saveMinorVersion !== currentMinorVersion) {
       setTimeout(() => {
-        alert(`Save version ${saveVersion} is not compatible with game version ${currentVersion}. Starting new game.`)
+        alert(`
+Attention Slime Slayer!
+
+Your save from ${saveVersion} doesn't quite fit into the ${currentVersion} world.
+
+The time has come to start a brand new adventure.`)
       }, 100)
       return undefined
     }
