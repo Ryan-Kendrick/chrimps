@@ -19,7 +19,6 @@ interface StatsState {
   achievementsUnlocked: string[]
   highestZone: number
   zoneTenCompleted: boolean
-  gameVersion: string
 }
 
 const initialState: StatsState = {
@@ -38,7 +37,6 @@ const initialState: StatsState = {
 
   // Persisted data
   zoneTenCompleted: false,
-  gameVersion: METADATA_CONFIG.version,
 }
 
 export const statsSlice = createSlice({
