@@ -19,7 +19,7 @@ const debugState: PlayerState = {
   plasma: 1000000,
   achievementModifier: 0,
 
-  activeHeroes: ["adventurer", "warrior"],
+  activeHeroes: ["warrior"],
   plasmaReserved: 0,
   hasInitClickMulti1: false,
   hasInitClickMulti2: false,
@@ -45,7 +45,7 @@ const initialState: PlayerState = {
   gold: 0,
   achievementModifier: 0,
 
-  activeHeroes: ["adventurer"],
+  activeHeroes: [],
   plasmaReserved: 0,
   // Prevents animation triggering again on mount
   hasInitClickMulti1: false,
@@ -250,14 +250,9 @@ export const selectAdventurerDamage = createSelector(
   },
 )
 export const selectWarriorDamage = createSelector(
-  [(state: RootState) => state.player.warriorLevel, (state: RootState) => state.player.warriorOTPUpgradeCount],
-  (warriorLevel, warriorUpgrades) => {
-    let damage = warriorLevel
-    for (let i = 0; i < warriorUpgrades; i++) {
-      damage *= UPGRADE_CONFIG.warrior.OneTimePurchases.OTPModifiers[i]
-    }
-    return damage
-  },
+  [selectWarriorState, (state: RootState) => state.player.pDamageUpgradeCount, selectAchievementModifier],
+  (warriorState, prestigeUpgradeCount, achievementModifier) =>
+    playerCalc.heroDamage("warrior", warriorState, 1 + prestigeUpgradeCount * prestigeDamage, 1 + achievementModifier),
 )
 export const selectClickDamage = (state: RootState): number =>
   playerCalc.clickDamage(
@@ -268,7 +263,7 @@ export const selectClickDamage = (state: RootState): number =>
   )
 
 export const selectDotDamage = (state: RootState): number => {
-  if (state.player.activeHeroes.length < 2) return 0
+  if (state.player.activeHeroes.length < 1) return 0
   type HeroStats = { level: number; upgradeCount: number }
 
   const activeHeroesStats = [] as HeroStats[]
@@ -277,7 +272,6 @@ export const selectDotDamage = (state: RootState): number => {
     const thisHeroStats = heroDamageMap[hero](state)
     activeHeroesStats.push(thisHeroStats)
   }
-
   return playerCalc.heroDamage(
     state.player.activeHeroes,
     activeHeroesStats,
