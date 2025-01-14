@@ -47,7 +47,7 @@ export const heroDamageMap: Record<HeroName, (state: RootState) => HeroStats> = 
   mage: (state) => {
     return { level: state.player.mageLevel, upgradeCount: state.player.mageOTPUpgradeCount }
   },
-}
+} as const
 
 export const setInitElementMap: Record<UpgradeId | HeroName, (state: PlayerState) => boolean> = {
   "adventurer-otp": (state: PlayerState) => {
@@ -56,22 +56,36 @@ export const setInitElementMap: Record<UpgradeId | HeroName, (state: PlayerState
   "warrior-otp": (state: PlayerState) => {
     state.hasInitWarriorOTP++
   },
+  "healer-otp": (state: PlayerState) => {
+    state.hasInitHealerOTP++
+  },
+  "mage-otp": (state: PlayerState) => {
+    state.hasInitMageOTP++
+  },
+  adventurer: (state: PlayerState) => true,
   warrior: (state: PlayerState) => {
     state.hasInitWarriorPane = true
   },
-  adventurer: (state: PlayerState) => true,
-}
+  healer: (state: PlayerState) => {
+    state.hasInitHealerPane = true
+  },
+  mage: (state: PlayerState) => {
+    state.hasInitMagePane = true
+  },
+} as const
 
 export const initSelectorMap: Record<UpgradeId | HeroName, (state: RootState) => number | boolean> = {
   "adventurer-otp": (state: PlayerState) => selectInitState(state).hasInitAdventurerOTP,
   "warrior-otp": (state: PlayerState) => selectInitState(state).hasInitWarriorOTP,
+  "healer-otp": (state: PlayerState) => selectInitState(state).hasInitHealerOTP,
+  "mage-otp": (state: PlayerState) => selectInitState(state).hasInitMageOTP,
   warrior: (state: PlayerState) => selectInitState(state).hasInitWarriorPane,
-}
+} as const
 
 export const prestigeUpgradeMap: Record<PrestigeUpgradeName, (state: RootState) => number> = {
   damage: (state) => selectPrestigeState(state).pDamageUpgradeCount,
   health: (state) => selectPrestigeState(state).pHealthUpgradeCount,
-}
+} as const
 
 export function useForcedDPI(): number {
   const getDPIScale = () => (window.matchMedia("(min-width: 1024px)").matches ? window.devicePixelRatio : 1)

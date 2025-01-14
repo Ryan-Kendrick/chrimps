@@ -13,6 +13,11 @@ export interface PlayerState {
   adventurerOTPUpgradeCount: number
   warriorLevel: number
   warriorOTPUpgradeCount: number
+  healerLevel: number
+  healerOTPUpgradeCount: number
+  mageLevel: number
+  mageOTPUpgradeCount: number
+
   gold: number
   plasma: number
   plasmaReserved: number
@@ -22,7 +27,10 @@ export interface PlayerState {
   hasInitAdventurerOTP: number
   hasInitWarriorPane: boolean
   hasInitWarriorOTP: number
-
+  hasInitHealerPane: boolean
+  hasInitHealerOTP: number
+  hasInitMagePane: boolean
+  hasInitMageOTP: number
   tabInView: Tab
 
   plasmaSpent: number

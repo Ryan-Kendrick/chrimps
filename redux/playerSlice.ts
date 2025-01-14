@@ -14,9 +14,12 @@ const debugState: PlayerState = {
   adventurerOTPUpgradeCount: 3,
   warriorLevel: 500,
   warriorOTPUpgradeCount: 3,
-  // TODO: add healer, mage
+  healerLevel: 500,
+  healerOTPUpgradeCount: 3,
+  mageLevel: 500,
+  mageOTPUpgradeCount: 3,
+
   gold: 1000000,
-  plasma: 1000000,
   achievementModifier: 0,
 
   activeHeroes: ["warrior"],
@@ -24,12 +27,16 @@ const debugState: PlayerState = {
   hasInitAdventurerOTP: 99,
   hasInitWarriorPane: true,
   hasInitWarriorOTP: 99,
-
+  hasInitHealerPane: true,
+  hasInitHealerOTP: 99,
+  hasInitMagePane: true,
+  hasInitMageOTP: 99,
   tabInView: "upgrade",
 
   startDate: performance.timeOrigin,
   pDamageUpgradeCount: 300,
   // pHealthUpgradeCount: 300,
+  plasma: 1000000,
   plasmaSpent: 50000,
 }
 
@@ -38,6 +45,11 @@ const initialState: PlayerState = {
   adventurerOTPUpgradeCount: 0,
   warriorLevel: 0,
   warriorOTPUpgradeCount: 0,
+  healerLevel: 0,
+  healerOTPUpgradeCount: 0,
+  mageLevel: 0,
+  mageOTPUpgradeCount: 0,
+
   gold: 0,
   achievementModifier: 0,
 
@@ -47,13 +59,17 @@ const initialState: PlayerState = {
   hasInitAdventurerOTP: 0,
   hasInitWarriorPane: false,
   hasInitWarriorOTP: 0,
-
+  hasInitHealerPane: false,
+  hasInitHealerOTP: 0,
+  hasInitMagePane: false,
+  hasInitMageOTP: 0,
   tabInView: "upgrade",
+
   // Preserved between runs
   startDate: performance.timeOrigin,
-  plasma: 0,
   pDamageUpgradeCount: 0,
   // pHealthUpgradeCount: 0,
+  plasma: 0,
   plasmaSpent: 0,
 }
 
