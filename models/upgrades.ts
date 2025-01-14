@@ -55,8 +55,8 @@ export interface PlayerCalc {
   heroDamage: (
     heroName: HeroName | HeroName[],
     heroStats: HeroStats | HeroStats[],
-    pDamage: number,
-    achievementModifier: number,
+    pDamage?: number,
+    achievementModifier?: number,
   ) => number
 }
 

@@ -123,10 +123,10 @@ export const UPGRADE_CONFIG: UpgradeConfig = {
 export const playerCalc: PlayerCalc = {
   clickDamage: (clickLevel, clickOTPUpgradeCount, pDamage, achievementModifier): number =>
     clickLevel * Math.pow(2, clickOTPUpgradeCount) * pDamage * achievementModifier,
-  heroDamage: (heroName, heroStats, pDamage, achievementModifier): number => {
+  heroDamage: (heroName, heroStats, pDamage?, achievementModifier?): number => {
     let damage = 0
 
-    if (Array.isArray(heroName) && Array.isArray(heroStats)) {
+    if (Array.isArray(heroName) && Array.isArray(heroStats) && pDamage && achievementModifier) {
       for (let i = 0; i < heroName.length; i++) {
         const { baseDamage, levelUpMod, OneTimePurchases } = UPGRADE_CONFIG[heroName[i]]
         const { level, upgradeCount } = heroStats[i]
@@ -137,8 +137,10 @@ export const playerCalc: PlayerCalc = {
         for (const mod of upgradeModifiers) {
           damage *= mod
         }
+        // If damage for all heroes is being added, return total effective dot damage
+        damage *= pDamage * achievementModifier
       }
-    } else {
+    } else if (typeof heroName === "string") {
       const { baseDamage, levelUpMod, OneTimePurchases } = UPGRADE_CONFIG[heroName as HeroName]
       const { level, upgradeCount } = heroStats as HeroStats
 
@@ -148,8 +150,11 @@ export const playerCalc: PlayerCalc = {
       for (const mod of upgradeModifiers) {
         damage *= mod
       }
+    } else {
+      throw new Error(
+        `Unexpected values in hero damage calculation: ${heroName} ${heroStats} ${pDamage} ${achievementModifier}`,
+      )
     }
-    damage *= pDamage * achievementModifier
     return damage
   },
 } as const

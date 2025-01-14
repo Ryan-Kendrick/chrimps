@@ -249,10 +249,8 @@ export const selectAdventurerDamage = createSelector(
     return damage
   },
 )
-export const selectWarriorDamage = createSelector(
-  [selectWarriorState, (state: RootState) => state.player.pDamageUpgradeCount, selectAchievementModifier],
-  (warriorState, prestigeUpgradeCount, achievementModifier) =>
-    playerCalc.heroDamage("warrior", warriorState, 1 + prestigeUpgradeCount * prestigeDamage, 1 + achievementModifier),
+export const selectWarriorDamage = createSelector([selectWarriorState], (warriorState) =>
+  playerCalc.heroDamage("warrior", warriorState),
 )
 export const selectClickDamage = (state: RootState): number =>
   playerCalc.clickDamage(
