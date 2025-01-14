@@ -2,7 +2,7 @@ import clsx from "clsx/lite"
 import { useEffect, useState } from "react"
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks"
 import { initialiseElement } from "../../../redux/playerSlice"
-import { UpgradeIdWithLevel } from "../../../models/upgrades"
+import { UpgradeId, UpgradeIdWithLevel } from "../../../models/upgrades"
 import { initSelectorMap } from "../../../gameconfig/utils"
 
 interface OneTimePurchaseProps {
@@ -28,17 +28,18 @@ export default function OneTimePurchaseUpgrade({
 
   const [shouldMount, setShouldMount] = useState(false)
   const [shimmer, setShimmer] = useState(false)
-  const thisSelector = initSelectorMap[id]
-  const hasInitialised = useAppSelector(thisSelector)
+  const [heroID, OTPNumber] = id.split(".") as [UpgradeId, string]
+  const thisSelector = initSelectorMap[heroID]
+  const hasInitialised = useAppSelector(thisSelector) as number
 
   useEffect(() => {
-    if (hasInitialised) return undefined
+    if (hasInitialised >= Number(OTPNumber)) return undefined
 
     if (!hidden && !shouldMount) {
       setShouldMount(true)
       const timeout = setTimeout(() => {
         setShimmer(true)
-        dispatch(initialiseElement(id))
+        dispatch(initialiseElement(heroID))
       }, 400)
 
       return () => clearTimeout(timeout)

@@ -19,13 +19,9 @@ export interface PlayerState {
   achievementModifier: number
 
   activeHeroes: HeroName[]
-  hasInitClickMulti1: boolean
-  hasInitClickMulti2: boolean
-  hasInitClickMulti3: boolean
-  hasInitDotPane: boolean
-  hasInitDotMulti1: boolean
-  hasInitDotMulti2: boolean
-  hasInitDotMulti3: boolean
+  hasInitAdventurerOTP: number
+  hasInitWarriorPane: boolean
+  hasInitWarriorOTP: number
 
   tabInView: Tab
 

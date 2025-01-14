@@ -1,5 +1,11 @@
 export type UpgradeId = "adventurer-otp" | "warrior-otp" | "healer-otp" | "mage-otp"
-export type UpgradeIdWithLevel = "click-otp.1" | "click-otp.2" | "click-otp.3" | "dot-otp.1" | "dot-otp.2" | "dot-otp.3"
+export type UpgradeIdWithLevel =
+  | "adventurer-otp.1"
+  | "adventurer-otp.2"
+  | "adventurer-otp.3"
+  | "warrior-otp.1"
+  | "warrior-otp.2"
+  | "warrior-otp.3"
 export type CostKey = "clickOTPCosts" | "dotOTPCosts"
 
 export interface UpgradeElement {

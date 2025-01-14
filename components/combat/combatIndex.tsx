@@ -50,9 +50,9 @@ export default function CombatIndex() {
           "flex flex-col h-full items-center relative overflow-y-auto",
           currentZoneNumber > 4 ? "justify-normal" : "justify-evenly",
         )}>
-        {/* <div className="absolute top-0 left-0 w-7 h-7 z-20 opacity-10 fill-white" onClick={debug}>
+        <div className="absolute top-0 left-0 w-7 h-7 z-20 opacity-10 fill-white" onClick={debug}>
           {CookieEnjoyerIcon()}
-        </div> */}
+        </div>
         {currentZoneNumber > 4 && (
           <div className={clsx("transition-opacity opacity-0 duration-300", fadeIn && "opacity-100")}>
             <FarmToggle />

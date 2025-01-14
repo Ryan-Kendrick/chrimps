@@ -1,7 +1,14 @@
 // @ts-nocheck
 
 import { useEffect, useState } from "react"
-import { PrestigeUpgradeConfig, PrestigeUpgradeName, UpgradeIdWithLevel, HeroName, HeroStats } from "../models/upgrades"
+import {
+  PrestigeUpgradeConfig,
+  PrestigeUpgradeName,
+  UpgradeIdWithLevel,
+  HeroName,
+  HeroStats,
+  UpgradeId,
+} from "../models/upgrades"
 import { RootState } from "../redux/store"
 import { PlayerState } from "../models/player"
 import { selectInitState, selectPrestigeState } from "../redux/playerSlice"
@@ -42,39 +49,23 @@ export const heroDamageMap: Record<HeroName, (state: RootState) => HeroStats> = 
   },
 }
 
-export const setInitElementMap: Record<UpgradeIdWithLevel | HeroName, (state: PlayerState) => boolean> = {
-  "adventurer-otp.1": (state) => {
-    state.hasInitClickMulti1 = true
+export const setInitElementMap: Record<UpgradeId | HeroName, (state: PlayerState) => boolean> = {
+  "adventurer-otp": (state: PlayerState) => {
+    state.hasInitAdventurerOTP++
   },
-  "adventurer-otp.2": (state) => {
-    state.hasInitClickMulti2 = true
+  "warrior-otp": (state: PlayerState) => {
+    state.hasInitWarriorOTP++
   },
-  "adventurer-otp.3": (state) => {
-    state.hasInitClickMulti3 = true
+  warrior: (state: PlayerState) => {
+    state.hasInitWarriorPane = true
   },
-  "warrior-otp.1": (state) => {
-    state.hasInitDotMulti1 = true
-  },
-  "warrior-otp.2": (state) => {
-    state.hasInitDotMulti2 = true
-  },
-  "warrior-otp.3": (state) => {
-    state.hasInitDotMulti3 = true
-  },
-  warrior: (state) => {
-    state.hasInitDotPane = true
-  },
-  adventurer: (state) => true,
+  adventurer: (state: PlayerState) => true,
 }
 
-export const initSelectorMap: Record<UpgradeIdWithLevel | HeroName, (state: RootState) => boolean> = {
-  "adventurer-otp.1": (state) => selectInitState(state).hasInitClickMulti1,
-  "adventurer-otp.2": (state) => selectInitState(state).hasInitClickMulti2,
-  "adventurer-otp.3": (state) => selectInitState(state).hasInitClickMulti3,
-  "warrior-otp.1": (state) => selectInitState(state).hasInitDotMulti1,
-  "warrior-otp.2": (state) => selectInitState(state).hasInitDotMulti2,
-  "warrior-otp.3": (state) => selectInitState(state).hasInitDotMulti3,
-  warrior: (state) => selectInitState(state).hasInitDotPane,
+export const initSelectorMap: Record<UpgradeId | HeroName, (state: RootState) => number | boolean> = {
+  "adventurer-otp": (state: PlayerState) => selectInitState(state).hasInitAdventurerOTP,
+  "warrior-otp": (state: PlayerState) => selectInitState(state).hasInitWarriorOTP,
+  warrior: (state: PlayerState) => selectInitState(state).hasInitWarriorPane,
 }
 
 export const prestigeUpgradeMap: Record<PrestigeUpgradeName, (state: RootState) => number> = {

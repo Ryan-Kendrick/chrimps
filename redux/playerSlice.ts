@@ -4,7 +4,7 @@ import { AppDispatch, type RootState } from "./store"
 import { PlayerState, Tab } from "../models/player"
 import { playerCalc, UPGRADE_CONFIG } from "../gameconfig/upgrades"
 import { heroDamageMap, heroStateMap, setInitElementMap } from "../gameconfig/utils"
-import { PrestigeState, PrestigeUpgradeName, UpgradeIdWithLevel, HeroName } from "../models/upgrades"
+import { PrestigeState, PrestigeUpgradeName, UpgradeIdWithLevel, HeroName, UpgradeId } from "../models/upgrades"
 import { prestigeReset } from "./shared/actions"
 import { ACHIEVEMENTS } from "../gameconfig/achievements"
 import { checkAchievementUnlock } from "./shared/helpers"
@@ -21,13 +21,9 @@ const debugState: PlayerState = {
 
   activeHeroes: ["warrior"],
   plasmaReserved: 0,
-  hasInitClickMulti1: false,
-  hasInitClickMulti2: false,
-  hasInitClickMulti3: false,
-  hasInitDotPane: false,
-  hasInitDotMulti1: false,
-  hasInitDotMulti2: false,
-  hasInitDotMulti3: false,
+  hasInitAdventurerOTP: 99,
+  hasInitWarriorPane: true,
+  hasInitWarriorOTP: 99,
 
   tabInView: "upgrade",
 
@@ -48,14 +44,9 @@ const initialState: PlayerState = {
   activeHeroes: [],
   plasmaReserved: 0,
   // Prevents animation triggering again on mount
-  hasInitClickMulti1: false,
-  hasInitClickMulti2: false,
-  hasInitClickMulti3: false,
-
-  hasInitDotPane: false,
-  hasInitDotMulti1: false,
-  hasInitDotMulti2: false,
-  hasInitDotMulti3: false,
+  hasInitAdventurerOTP: 0,
+  hasInitWarriorPane: false,
+  hasInitWarriorOTP: 0,
 
   tabInView: "upgrade",
   // Preserved between runs
@@ -121,7 +112,7 @@ export const playerSlice = createSlice({
       const payloadValue = Math.round(action.payload * 100)
       state.achievementModifier = (currentValue + payloadValue) / 100
     },
-    initialiseElement(state, action: PayloadAction<UpgradeIdWithLevel | HeroName>) {
+    initialiseElement(state, action: PayloadAction<UpgradeId | HeroName>) {
       setInitElementMap[action.payload](state)
     },
     setTabInView: (state, action: PayloadAction<Tab>) => {
@@ -145,13 +136,9 @@ export const playerSlice = createSlice({
       state.plasmaSpent += state.plasmaReserved
       state.activeHeroes = ["adventurer"]
       state.plasmaReserved = 0
-      state.hasInitClickMulti1 = false
-      state.hasInitClickMulti2 = false
-      state.hasInitClickMulti3 = false
-      state.hasInitDotPane = false
-      state.hasInitDotMulti1 = false
-      state.hasInitDotMulti2 = false
-      state.hasInitDotMulti3 = false
+      state.hasInitAdventurerOTP = 0
+      state.hasInitWarriorPane = false
+      state.hasInitWarriorOTP = 0
 
       state.tabInView = "upgrade"
 
@@ -211,22 +198,10 @@ export const selectPrestigeState = createSelector([(state: RootState) => state.p
 
 export const selectInitState = createSelector(
   [(state: RootState) => state.player],
-  ({
-    hasInitClickMulti1,
-    hasInitClickMulti2,
-    hasInitClickMulti3,
-    hasInitDotPane,
-    hasInitDotMulti1,
-    hasInitDotMulti2,
-    hasInitDotMulti3,
-  }) => ({
-    hasInitClickMulti1,
-    hasInitClickMulti2,
-    hasInitClickMulti3,
-    hasInitDotPane,
-    hasInitDotMulti1,
-    hasInitDotMulti2,
-    hasInitDotMulti3,
+  ({ hasInitAdventurerOTP, hasInitWarriorPane, hasInitWarriorOTP }) => ({
+    hasInitAdventurerOTP,
+    hasInitWarriorPane,
+    hasInitWarriorOTP,
   }),
 )
 
