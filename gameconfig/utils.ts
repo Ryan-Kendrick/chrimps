@@ -74,7 +74,7 @@ export const initSelectorMap: Record<UpgradeIdWithLevel | HeroName, (state: Root
   "warrior-otp.1": (state) => selectInitState(state).hasInitDotMulti1,
   "warrior-otp.2": (state) => selectInitState(state).hasInitDotMulti2,
   "warrior-otp.3": (state) => selectInitState(state).hasInitDotMulti3,
-  dot: (state) => selectInitState(state).hasInitDotPane,
+  warrior: (state) => selectInitState(state).hasInitDotPane,
 }
 
 export const prestigeUpgradeMap: Record<PrestigeUpgradeName, (state: RootState) => number> = {
