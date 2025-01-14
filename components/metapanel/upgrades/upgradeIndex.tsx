@@ -11,6 +11,7 @@ import {
   updateClickDamage,
   selectAdventurerDamage,
   selectWarriorDamage,
+  selectLevelUpCosts,
 } from "../../../redux/playerSlice"
 import { ClickOTPIcon1, ClickOTPIcon2, ClickOTPIcon3 } from "../../../assets/svg/clickIcons"
 import { UPGRADE_CONFIG } from "../../../gameconfig/upgrades"
@@ -23,11 +24,9 @@ export default function UpgradeIndex() {
   const dispatch = useAppDispatch()
 
   const clickDamage = useAppSelector(selectClickDamage)
-  const adventurerDamage = useAppSelector(selectAdventurerDamage)
   const dotDamage = useAppSelector(selectDotDamage)
-  const warriorDamage = useAppSelector(selectWarriorDamage)
-  const adventurerLevelUpCost = useAppSelector(selectAdventurerLevelUpCost)
-  const warriorLevelUpCost = useAppSelector(selectWarriorLevelUpCost)
+  const { adventurerLevelUpCost, warriorLevelUpCost, healerLevelUpCost, mageLevelUpCost } =
+    useAppSelector(selectLevelUpCosts)
   const goldSelector = selectGold
 
   const LevelUp = {
@@ -43,15 +42,15 @@ export default function UpgradeIndex() {
     },
     healer: {
       // TODO: replace placeholder values
-      cost: adventurerLevelUpCost,
-      canAfford: useAppSelector(selectGCanAfford(adventurerLevelUpCost)),
-      action: updateClickDamage("adventurer-levelup"),
+      cost: healerLevelUpCost,
+      canAfford: useAppSelector(selectGCanAfford(healerLevelUpCost)),
+      action: updateDotDamage("healer-levelup"),
     },
     mage: {
       // TODO: replace placeholder values
-      cost: adventurerLevelUpCost,
-      canAfford: useAppSelector(selectGCanAfford(adventurerLevelUpCost)),
-      action: updateClickDamage("adventurer-levelup"),
+      cost: mageLevelUpCost,
+      canAfford: useAppSelector(selectGCanAfford(mageLevelUpCost)),
+      action: updateDotDamage("mage-levelup"),
     },
   }
 
@@ -94,14 +93,24 @@ export default function UpgradeIndex() {
       <div className="flex flex-col flex-1">
         <UpgradePane
           config={UPGRADE_CONFIG.adventurer}
-          damage={adventurerDamage}
           OTPIcons={[ClickOTPIcon1(), ClickOTPIcon2(), ClickOTPIcon3()]}
           onUpgrade={onUpgrade}
           onLevelUp={onLevelup}
         />
         <UpgradePane
           config={UPGRADE_CONFIG.warrior}
-          damage={warriorDamage}
+          OTPIcons={[ClickOTPIcon1(), ClickOTPIcon2(), ClickOTPIcon3()]}
+          onUpgrade={onUpgrade}
+          onLevelUp={onLevelup}
+        />
+        <UpgradePane
+          config={UPGRADE_CONFIG.healer}
+          OTPIcons={[ClickOTPIcon1(), ClickOTPIcon2(), ClickOTPIcon3()]}
+          onUpgrade={onUpgrade}
+          onLevelUp={onLevelup}
+        />
+        <UpgradePane
+          config={UPGRADE_CONFIG.mage}
           OTPIcons={[ClickOTPIcon1(), ClickOTPIcon2(), ClickOTPIcon3()]}
           onUpgrade={onUpgrade}
           onLevelUp={onLevelup}

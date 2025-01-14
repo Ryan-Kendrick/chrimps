@@ -205,6 +205,22 @@ export const selectWarriorState = createHeroSelector("warrior")
 export const selectHealerState = createHeroSelector("healer")
 export const selectMageState = createHeroSelector("mage")
 
+export const selectAdventurerLevelUpCost = (state: RootState) =>
+  UPGRADE_CONFIG.adventurer.levelUpCost(state.player.adventurerLevel)
+export const selectWarriorLevelUpCost = (state: RootState) =>
+  UPGRADE_CONFIG.warrior.levelUpCost(state.player.warriorLevel)
+export const selectHealerLevelUpCost = (state: RootState) => UPGRADE_CONFIG.healer.levelUpCost(state.player.healerLevel)
+export const selectMageLevelUpCost = (state: RootState) => UPGRADE_CONFIG.mage.levelUpCost(state.player.mageLevel)
+export const selectLevelUpCosts = createSelector(
+  [selectAdventurerLevelUpCost, selectWarriorLevelUpCost, selectHealerLevelUpCost, selectMageLevelUpCost],
+  (adventurerLevelUpCost, warriorLevelUpCost, healerLevelUpCost, mageLevelUpCost) => ({
+    adventurerLevelUpCost,
+    warriorLevelUpCost,
+    healerLevelUpCost,
+    mageLevelUpCost,
+  }),
+)
+
 export const selectPrestigeState = createSelector([(state: RootState) => state.player], (player) => ({
   plasma: player.plasma,
   plasmaSpent: player.plasmaSpent,
@@ -242,18 +258,17 @@ export const selectPlasmaReserved = (state: RootState) => state.player.plasmaRes
 export const selectAchievementModifier = (state: RootState) => state.player.achievementModifier
 
 const prestigeDamage = UPGRADE_CONFIG.prestige.find((pUpgrade) => pUpgrade.id === "damage")!.modifier
-export const selectAdventurerDamage = createSelector(
-  [selectAdventurerLevel, (state: RootState) => state.player.adventurerOTPUpgradeCount],
-  (adventurerLevel, adventurerUpgrades) => {
-    let damage = adventurerLevel
-    for (let i = 0; i < adventurerUpgrades; i++) {
-      damage *= UPGRADE_CONFIG.adventurer.OneTimePurchases.OTPModifiers[i]
-    }
-    return damage
-  },
+export const selectAdventurerDamage = createSelector([selectAdventurerState], (adventurerState) =>
+  playerCalc.heroDamage("adventurer", adventurerState),
 )
 export const selectWarriorDamage = createSelector([selectWarriorState], (warriorState) =>
   playerCalc.heroDamage("warrior", warriorState),
+)
+export const selectHealerDamage = createSelector([selectHealerState], (healerState) =>
+  playerCalc.heroDamage("healer", healerState),
+)
+export const selectMageDamage = createSelector([selectMageState], (mageState) =>
+  playerCalc.heroDamage("mage", mageState),
 )
 export const selectClickDamage = (state: RootState): number =>
   playerCalc.clickDamage(
@@ -262,7 +277,6 @@ export const selectClickDamage = (state: RootState): number =>
     1 + state.player.pDamageUpgradeCount * prestigeDamage,
     1 + state.player.achievementModifier,
   )
-
 export const selectDotDamage = (state: RootState): number => {
   if (state.player.activeHeroes.length < 1) return 0
   type HeroStats = { level: number; upgradeCount: number }
@@ -280,11 +294,6 @@ export const selectDotDamage = (state: RootState): number => {
     1 + state.player.achievementModifier,
   )
 }
-
-export const selectAdventurerLevelUpCost = (state: RootState) =>
-  UPGRADE_CONFIG.adventurer.levelUpCost(state.player.adventurerLevel)
-export const selectWarriorLevelUpCost = (state: RootState) =>
-  UPGRADE_CONFIG.warrior.levelUpCost(state.player.warriorLevel)
 
 export const selectTabInView = (state: RootState) => state.player.tabInView
 export const selectPrestigeTabVisible = createSelector(

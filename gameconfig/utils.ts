@@ -25,12 +25,12 @@ export const heroStateMap: Record<HeroName, { level: keyof PlayerState; upgradeC
     upgradeCount: "warriorOTPUpgradeCount",
   },
   healer: {
-    level: "adventurerLevel",
-    upgradeCount: "adventurerOTPUpgradeCount",
+    level: "healerLevel",
+    upgradeCount: "healerOTPUpgradeCount",
   },
   mage: {
-    level: "adventurerLevel",
-    upgradeCount: "adventurerOTPUpgradeCount",
+    level: "mageLevel",
+    upgradeCount: "mageOTPUpgradeCount",
   },
 } as const
 

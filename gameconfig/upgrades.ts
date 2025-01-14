@@ -72,7 +72,7 @@ export const UPGRADE_CONFIG: UpgradeConfig = {
   },
   mage: {
     visibleAtZone: 22,
-    elementId: "warrior-otp",
+    elementId: "mage-otp",
     displayName: "Warrior",
     displayStat: "Damage Over Time",
     baseDamage: 800,

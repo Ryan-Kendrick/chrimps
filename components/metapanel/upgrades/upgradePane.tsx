@@ -10,6 +10,11 @@ import {
   selectWarriorState,
   selectHealerState,
   selectMageState,
+  selectClickDamage,
+  selectWarriorDamage,
+  selectHealerDamage,
+  selectMageDamage,
+  selectAdventurerDamage,
 } from "../../../redux/playerSlice"
 import OneTimePurchaseUpgrade from "./oneTimePurchase"
 import { UPGRADE_CONFIG } from "../../../gameconfig/upgrades"
@@ -20,13 +25,12 @@ import { initSelectorMap } from "../../../gameconfig/utils"
 
 interface UpgradePaneProps {
   config: Upgrade
-  damage: number
   OTPIcons: JSX.Element[]
   onUpgrade: (e: React.MouseEvent<HTMLDivElement>, hidden: boolean, cost: number, isAffordable: boolean) => void
   onLevelUp: (e: React.MouseEvent<HTMLButtonElement>) => void
 }
 
-export default function UpgradePane({ config, damage, OTPIcons: OTPIcons, onUpgrade, onLevelUp }: UpgradePaneProps) {
+export default function UpgradePane({ config, OTPIcons: OTPIcons, onUpgrade, onLevelUp }: UpgradePaneProps) {
   const dispatch = useAppDispatch()
   const [upgradeName] = config.elementId.split("-")
   const thisUpgradeName = upgradeName as HeroName
@@ -34,22 +38,27 @@ export default function UpgradePane({ config, damage, OTPIcons: OTPIcons, onUpgr
   const upgradeProps: UpgradeProps = {
     adventurer: {
       ...useAppSelector(selectAdventurerState),
+      damage: useAppSelector(selectAdventurerDamage),
       levelUpCost: useAppSelector(selectAdventurerLevelUpCost),
     },
     warrior: {
       ...useAppSelector(selectWarriorState),
+      damage: useAppSelector(selectWarriorDamage),
       levelUpCost: useAppSelector(selectWarriorLevelUpCost),
     },
     healer: {
       ...useAppSelector(selectHealerState),
+      damage: useAppSelector(selectHealerDamage),
       levelUpCost: useAppSelector(selectAdventurerLevelUpCost),
     },
     mage: {
       ...useAppSelector(selectMageState),
+      damage: useAppSelector(selectMageDamage),
       levelUpCost: useAppSelector(selectAdventurerLevelUpCost),
     },
   }
   const thisUpgradeProps = upgradeProps[thisUpgradeName]
+  const damage = upgradeProps[thisUpgradeName].damage
 
   const canAffordLevelUp = useAppSelector(selectGCanAfford(thisUpgradeProps.levelUpCost))
   const canAffordOTPUpgrade = useAppSelector(

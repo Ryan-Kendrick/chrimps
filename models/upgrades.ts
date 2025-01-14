@@ -74,6 +74,7 @@ export type UpgradeProps = {
   [key in HeroName]: {
     level: number
     upgradeCount: number
+    damage: number
     levelUpCost: number
   }
 }
