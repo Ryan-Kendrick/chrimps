@@ -80,6 +80,8 @@ export const initSelectorMap: Record<UpgradeId | HeroName, (state: RootState) =>
   "healer-otp": (state: PlayerState) => selectInitState(state).hasInitHealerOTP,
   "mage-otp": (state: PlayerState) => selectInitState(state).hasInitMageOTP,
   warrior: (state: PlayerState) => selectInitState(state).hasInitWarriorPane,
+  healer: (state: PlayerState) => selectInitState(state).hasInitHealerPane,
+  mage: (state: PlayerState) => selectInitState(state).hasInitMagePane,
 } as const
 
 export const prestigeUpgradeMap: Record<PrestigeUpgradeName, (state: RootState) => number> = {

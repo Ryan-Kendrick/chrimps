@@ -214,10 +214,22 @@ export const selectPrestigeState = createSelector([(state: RootState) => state.p
 
 export const selectInitState = createSelector(
   [(state: RootState) => state.player],
-  ({ hasInitAdventurerOTP, hasInitWarriorPane, hasInitWarriorOTP }) => ({
+  ({
     hasInitAdventurerOTP,
     hasInitWarriorPane,
     hasInitWarriorOTP,
+    hasInitHealerPane,
+    hasInitHealerOTP,
+    hasInitMagePane,
+    hasInitMageOTP,
+  }) => ({
+    hasInitAdventurerOTP,
+    hasInitWarriorPane,
+    hasInitWarriorOTP,
+    hasInitHealerPane,
+    hasInitHealerOTP,
+    hasInitMagePane,
+    hasInitMageOTP,
   }),
 )
 
