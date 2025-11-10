@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react"
+import { RefObject, useCallback, useEffect, useRef, useState } from "react"
 import { HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signalr"
 import clsx from "clsx/lite"
 import { ChatUser, ConfirmedMessage, SystemMessage, UserMessage } from "../../models/slimechat"
@@ -228,7 +228,7 @@ export default function Chat() {
     }
   }, [connectChat])
 
-  useAutoScroll(chatHistoryRef, [displayedMessages])
+  useAutoScroll(chatHistoryRef as RefObject<HTMLDivElement>, [displayedMessages])
 
   return (
     <div className="flex h-full gap-0.5">

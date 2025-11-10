@@ -92,7 +92,7 @@ export function useGameEngine(props: EngineProps) {
 
   const tickCount = useRef(0)
   const lastLoopTime = useRef(0)
-  const frameRef = useRef<number>()
+  const frameRef = useRef<number | undefined>(0)
   const TICK_RATE = 20 / PERFORMANCE_CONFIG.animPrefGameSpeedMod[animationPref]
   const TICK_TIME = 1000 / TICK_RATE
 
@@ -500,7 +500,7 @@ export function useOTPPositions({
     }
   }, [OTPUpgradeCount, iconsLength, isMobile, shouldMount])
 
-  return OTPContainerRef
+  return OTPContainerRef as React.RefObject<HTMLDivElement>
 }
 
 type AnimationProps = {
@@ -681,7 +681,7 @@ export const useToolTip = ({ containerRef, tooltipRef }: ToolTipProps) => {
   return { position, setIsVisible: setVisibility, isPositionReady }
 }
 
-const useAutoScroll = (ref: React.RefObject<HTMLElement>, dependencyArr: unknown[] = []) => {
+const useAutoScroll = (ref: React.RefObject<HTMLDivElement>, dependencyArr: unknown[] = []) => {
   useEffect(() => {
     if (ref.current) {
       ref.current.scrollTo({
