@@ -1,10 +1,14 @@
+<<<<<<< HEAD:pages/chat/+Page.tsx
 import { RefObject, useCallback, useEffect, useRef, useState } from "react"
+=======
+import React, { useCallback, useEffect, useRef, useState } from "react"
+>>>>>>> dd393fe856d8201094ed49a401caa6021f9ecbcb:components/nav/chat.tsx
 import { HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signalr"
 import clsx from "clsx/lite"
 import { ChatUser, ConfirmedMessage, SystemMessage, UserMessage } from "../../models/slimechat"
 import { METADATA_CONFIG } from "../../gameconfig/meta"
 import { formatTime, getRandomColor } from "../../gameconfig/utils"
-import useAutoScroll from "../../gameconfig/customHooks"
+import { useAutoScroll } from "../../gameconfig/customHooks"
 
 export default function Chat() {
   const messageRetryTime = 60000
@@ -19,6 +23,7 @@ export default function Chat() {
   const chatHistoryRef = useRef<HTMLDivElement>(null)
   const chatInputRef = useRef<HTMLTextAreaElement>(null)
   const connectionRef = useRef<HubConnection | null>(null)
+  const connectingInProgressRef = useRef<boolean>(false)
   const reconnectTimerRef = useRef<NodeJS.Timeout | null>(null)
   const slowConnectTimerRef = useRef<NodeJS.Timeout | null>(null)
   const messageQueueRef = useRef<Array<{ message: UserMessage; createdAt: number }>>([])
@@ -40,9 +45,11 @@ export default function Chat() {
 
   const connectChat = useCallback(
     async (user: ChatUser) => {
-      if (!mountedRef.current) return
-      if (!connectionRef.current || connectionRef.current.state !== "Disconnected") return
+      if (!mountedRef.current || !connectionRef.current) return
+      const state = connectionRef.current?.state
+      if (state !== "Disconnected" || connectingInProgressRef.current) return
 
+      connectingInProgressRef.current = true
       try {
         console.log("Connecting to chat...")
 
@@ -54,25 +61,26 @@ export default function Chat() {
             setChatConnected(false)
           }
         }, optimismTime)
-
+        console.log("Starting connection at", new Date().toISOString(), "state:", connectionRef.current?.state)
         await connectionRef.current.start()
+
         setChatConnected(true)
-
-        if (reconnectTimerRef.current) clearTimeout(reconnectTimerRef.current)
-        if (slowConnectTimerRef.current) clearTimeout(slowConnectTimerRef.current)
-
         flushMessageQueue()
         connectionRef.current?.invoke("JoinChat", user).catch((err) => {
           console.error("Error notifying server of user joined:", err)
         })
-      } catch (error) {
-        console.error("Failed to connect to chat:", error)
+      } catch (err) {
+        console.error("Failed to connect to chat:", err)
         setChatConnected(false)
 
         if (reconnectTimerRef.current) clearTimeout(reconnectTimerRef.current)
         if (slowConnectTimerRef.current) clearTimeout(slowConnectTimerRef.current)
 
         if (mountedRef.current) reconnectTimerRef.current = setTimeout(() => connectChat(user), 5000)
+      } finally {
+        if (reconnectTimerRef.current) clearTimeout(reconnectTimerRef.current)
+        if (slowConnectTimerRef.current) clearTimeout(slowConnectTimerRef.current)
+        connectingInProgressRef.current = false
       }
     },
     [flushMessageQueue],
@@ -199,19 +207,11 @@ export default function Chat() {
       setDisplayedMessages((prevMessages) => [...prevMessages, { ...incomingMessage, unixTime: Date.now() }])
     })
 
-    connection.onclose(async () => {
-      if (mountedRef.current) {
-        await connectChat(userInfo ?? initialiseUser())
-      }
-    })
-
     connectionRef.current = connection
     const user = initialiseUser()
 
     // Initial connection
-    if (mountedRef.current && connectionRef.current?.state === "Disconnected") {
-      connectChat(user)
-    }
+    connectChat(user)
 
     const handleBeforeUnload = () => {
       connectionRef.current?.stop()
@@ -224,11 +224,23 @@ export default function Chat() {
       mountedRef.current = false
       if (reconnectTimerRef.current) clearTimeout(reconnectTimerRef.current)
       if (slowConnectTimerRef.current) clearTimeout(slowConnectTimerRef.current)
-      connectionRef.current?.stop()
+      connection.off("GetActiveUsers")
+      connection.off("GetMessageHistory")
+      connection.off("UserJoined")
+      connection.off("UserLeft")
+      connection.off("MessageReceived")
+      connection.off("ServerMessage")
+      connectionRef.current?.stop().catch(() => {})
+      connectionRef.current = null
+      connectingInProgressRef.current = false
     }
   }, [connectChat])
 
+<<<<<<< HEAD:pages/chat/+Page.tsx
   useAutoScroll(chatHistoryRef as RefObject<HTMLDivElement>, [displayedMessages])
+=======
+  useAutoScroll(chatHistoryRef as React.RefObject<HTMLDivElement>, [displayedMessages])
+>>>>>>> dd393fe856d8201094ed49a401caa6021f9ecbcb:components/nav/chat.tsx
 
   return (
     <div className="flex h-full gap-0.5">

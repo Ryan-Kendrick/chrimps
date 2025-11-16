@@ -1,4 +1,4 @@
-import { memo, useState } from "react"
+import { memo, useEffect, useState } from "react"
 import ReactModal from "react-modal"
 import { Styles as ModalStylesheet } from "react-modal"
 import { CancelIcon } from "../svgIcons/metaIcons"
@@ -10,20 +10,22 @@ import { selectAnimationPref, toggleAnimationPref } from "../../redux/metaSlice"
 import Chat from "./chat"
 import { usePageContext } from "vike-react/usePageContext"
 import { navigate } from "vike/client/router"
+import { useParams } from "../../gameconfig/customHooks"
 
 export const Navigation = memo(function Navigation() {
   const context = usePageContext()
-  const path = context.urlPathname
+  const params = useParams(context)
 
-  const viewAchievements = path === "/achievements"
-  const viewChat = path === "/chat"
+  const achievementParamUsed = params?.view === "achievements"
+  const chatParamUsed = params?.view === "chat"
 
   const handleOpenAchievements = () => {
-    navigate("/achievements", { keepScrollPosition: true })
+    if (!achievementParamUsed) navigate("/?view=achievements", { keepScrollPosition: true })
   }
 
+  console.log("open chat handler", chatParamUsed)
   const handleOpenChat = () => {
-    navigate("/chat", { keepScrollPosition: true })
+    if (!chatParamUsed) navigate("/?view=chat", { keepScrollPosition: true })
   }
 
   const handleCloseAchievements = () => {
@@ -40,7 +42,7 @@ export const Navigation = memo(function Navigation() {
       <NavigationLinkButton text="Chat" onClick={handleOpenChat} />
 
       <ReactModal
-        isOpen={viewAchievements}
+        isOpen={achievementParamUsed}
         onRequestClose={handleCloseAchievements}
         contentLabel="Achievement list"
         style={achievementsStyle}
@@ -55,7 +57,7 @@ export const Navigation = memo(function Navigation() {
         </button>
       </ReactModal>
       <ReactModal
-        isOpen={viewChat}
+        isOpen={chatParamUsed}
         onRequestClose={handleCloseChat}
         contentLabel="Chat"
         style={chatStyle}

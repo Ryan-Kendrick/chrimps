@@ -19,6 +19,8 @@ import { EnemyState } from "../models/monsters"
 import { enemyAttack, selectBeatDamage, selectDotDamage, selectRespawnTime, setRespawnTime } from "../redux/playerSlice"
 import { store } from "../redux/store"
 import { selectMonsterState } from "../redux/monsterSlice"
+import { usePageContext } from "vike-react/usePageContext"
+import { PageContext } from "vike/types"
 
 export function useForcedDPI(): number {
   const getDPIScale = () => (window.matchMedia("(min-width: 1024px)").matches ? window.devicePixelRatio : 1)
@@ -681,7 +683,7 @@ export const useToolTip = ({ containerRef, tooltipRef }: ToolTipProps) => {
   return { position, setIsVisible: setVisibility, isPositionReady }
 }
 
-const useAutoScroll = (ref: React.RefObject<HTMLDivElement>, dependencyArr: unknown[] = []) => {
+export const useAutoScroll = (ref: React.RefObject<HTMLElement>, dependencyArr: unknown[] = []) => {
   useEffect(() => {
     if (ref.current) {
       ref.current.scrollTo({
@@ -692,4 +694,10 @@ const useAutoScroll = (ref: React.RefObject<HTMLDivElement>, dependencyArr: unkn
   }, dependencyArr)
 }
 
-export default useAutoScroll
+export const useParams = (context: PageContext): Record<string, string> => {
+  const [qParams, setQParams] = useState<Record<string, string>>({})
+  useEffect(() => {
+    setQParams(context.urlParsed.search)
+  }, [context.routeParams])
+  return qParams
+}

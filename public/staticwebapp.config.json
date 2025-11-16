@@ -1,8 +1,4 @@
 {
-  "navigationFallback": {
-    "rewrite": "/index.html",
-    "exclude": ["/assets/*", "/**/*.{css,js,jpg,png,gif,svg,webp,woff,woff2}"]
-  },
   "responseOverrides": {
     "404": {
       "rewrite": "/index.html",
@@ -15,14 +11,6 @@
       "headers": {
         "cache-control": "public, max-age=14500"
       }
-    },
-    {
-      "route": "/chat",
-      "rewrite": "/index.html"
-    },
-    {
-      "route": "/achievements",
-      "rewrite": "/index.html"
     }
   ]
 }
