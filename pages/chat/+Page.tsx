@@ -1,8 +1,4 @@
-<<<<<<< HEAD:pages/chat/+Page.tsx
-import { RefObject, useCallback, useEffect, useRef, useState } from "react"
-=======
 import React, { useCallback, useEffect, useRef, useState } from "react"
->>>>>>> dd393fe856d8201094ed49a401caa6021f9ecbcb:components/nav/chat.tsx
 import { HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signalr"
 import clsx from "clsx/lite"
 import { ChatUser, ConfirmedMessage, SystemMessage, UserMessage } from "../../models/slimechat"
