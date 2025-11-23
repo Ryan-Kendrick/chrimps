@@ -13,43 +13,26 @@ import { navigate } from "vike/client/router"
 import { useParams } from "../../gameconfig/customHooks"
 
 export const Navigation = memo(function Navigation() {
-  // const context = usePageContext()
-  // const params = useParams(context)
+  const context = usePageContext()
+  const params = useParams(context)
 
-  // const achievementParamUsed = params?.view === "achievements"
-  // const chatParamUsed = params?.view === "chat"
-
-  // const handleOpenAchievements = () => {
-  //   if (!achievementParamUsed) navigate("/?view=achievements", { keepScrollPosition: true })
-  // }
-
-  // const handleOpenChat = () => {
-  //   if (!chatParamUsed) navigate("/?view=chat", { keepScrollPosition: true })
-  // }
-
-  // const handleCloseAchievements = () => {
-  //   navigate("/", { keepScrollPosition: true })
-  // }
-
-  // const handleCloseChat = () => {
-  //   navigate("/", { keepScrollPosition: true })
-  // }
-
-  const [openChat, setOpenChat] = useState(false)
-  const [openAchievements, setOpenAchievements] = useState(false)
-
-  const handleOpenChat = () => {
-    setOpenChat(true)
-  }
-  const handleCloseChat = () => {
-    setOpenChat(false)
-  }
+  const achievementParamUsed = params?.view === "achievements"
+  const chatParamUsed = params?.view === "chat"
 
   const handleOpenAchievements = () => {
-    setOpenAchievements(true)
+    if (!achievementParamUsed) navigate("/?view=achievements", { keepScrollPosition: true })
   }
+
+  const handleOpenChat = () => {
+    if (!chatParamUsed) navigate("/?view=chat", { keepScrollPosition: true })
+  }
+
   const handleCloseAchievements = () => {
-    setOpenAchievements(false)
+    navigate("/", { keepScrollPosition: true })
+  }
+
+  const handleCloseChat = () => {
+    navigate("/", { keepScrollPosition: true })
   }
 
   return (
@@ -58,7 +41,7 @@ export const Navigation = memo(function Navigation() {
       <NavigationLinkButton text="Chat" onClick={handleOpenChat} />
 
       <ReactModal
-        isOpen={openAchievements}
+        isOpen={achievementParamUsed}
         onRequestClose={handleCloseAchievements}
         contentLabel="Achievement list"
         style={achievementsStyle}
@@ -73,7 +56,7 @@ export const Navigation = memo(function Navigation() {
         </button>
       </ReactModal>
       <ReactModal
-        isOpen={openChat}
+        isOpen={chatParamUsed}
         onRequestClose={handleCloseChat}
         contentLabel="Chat"
         style={chatStyle}
