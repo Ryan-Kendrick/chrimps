@@ -1,140 +1,45 @@
-import React, { useCallback, useEffect, useRef, useState } from "react"
-import { HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signalr"
-import clsx from "clsx/lite"
-import { ChatUser, ConfirmedMessage, SystemMessage, UserMessage } from "../../models/slimechat"
-import { METADATA_CONFIG } from "../../gameconfig/meta"
-import { formatTime, getRandomColor } from "../../gameconfig/utils"
+import React, { useEffect, useRef, useState } from "react"
+import { ChatUser, ConfirmedMessage, MessageQueue, SystemMessage, UserMessage } from "../../models/slimechat"
+import getInstance, { ChatConnection, EventHandlers } from "../../gameconfig/slimechat"
 import { useAutoScroll } from "../../gameconfig/customHooks"
+import clsx from "clsx/lite"
 
 export default function Chat() {
-  const messageRetryTime = 60000
-  const optimismTime = 6000
-
   const [activeUsers, setActiveUsers] = useState<ChatUser[]>([])
   const [displayedMessages, setDisplayedMessages] = useState<(UserMessage | ConfirmedMessage | SystemMessage)[]>([])
   const [ChatInputFocused, setChatInputFocused] = useState(false)
   const [chatConnected, setChatConnected] = useState(true)
+  const chatInstanceRef = useRef<ChatConnection | null>(null)
   const [userInfo, setUserInfo] = useState<ChatUser | null>(null)
   const mountedRef = useRef(false)
   const chatHistoryRef = useRef<HTMLDivElement>(null)
   const chatInputRef = useRef<HTMLTextAreaElement>(null)
-  const connectionRef = useRef<HubConnection | null>(null)
-  const connectingInProgressRef = useRef<boolean>(false)
-  const reconnectTimerRef = useRef<NodeJS.Timeout | null>(null)
-  const slowConnectTimerRef = useRef<NodeJS.Timeout | null>(null)
-  const messageQueueRef = useRef<Array<{ message: UserMessage; createdAt: number }>>([])
 
-  const flushMessageQueue = useCallback(() => {
-    if (!connectionRef.current || connectionRef.current.state !== "Connected") return
+  const chatEventHandlers = {
+    getActiveUsers: setActiveUsers,
+    getMessageHistory: setDisplayedMessages,
+    userJoined: [setDisplayedMessages, setActiveUsers],
+    userLeft: setDisplayedMessages,
+    messageReceived: setDisplayedMessages,
+    serverMessage: setDisplayedMessages,
+  } as EventHandlers
 
-    const now = Date.now()
-    const messagesToSend = messageQueueRef.current.filter((item) => now - item.createdAt <= messageRetryTime)
-
-    messagesToSend.forEach((item) => {
-      connectionRef.current?.invoke("BroadcastMessage", item.message).catch((error) => {
-        console.error("Error sending queued message:", error)
-      })
-    })
-
-    messageQueueRef.current = []
-  }, [])
-
-  const connectChat = useCallback(
-    async (user: ChatUser) => {
-      if (!mountedRef.current || !connectionRef.current) return
-      const state = connectionRef.current?.state
-      if (state !== "Disconnected" || connectingInProgressRef.current) return
-
-      connectingInProgressRef.current = true
-      try {
-        console.log("Connecting to chat...")
-
-        slowConnectTimerRef.current = setTimeout(() => {
-          if (connectionRef.current && connectionRef.current.state !== "Connected") {
-            console.warn(
-              "Server response taking longer than expected, might be a cold start. Displaying reconnecting message",
-            )
-            setChatConnected(false)
-          }
-        }, optimismTime)
-        console.log("Starting connection at", new Date().toISOString(), "state:", connectionRef.current?.state)
-        await connectionRef.current.start()
-
-        setChatConnected(true)
-        flushMessageQueue()
-        connectionRef.current?.invoke("JoinChat", user).catch((err) => {
-          console.error("Error notifying server of user joined:", err)
-        })
-      } catch (err) {
-        console.error("Failed to connect to chat:", err)
-        setChatConnected(false)
-
-        if (reconnectTimerRef.current) clearTimeout(reconnectTimerRef.current)
-        if (slowConnectTimerRef.current) clearTimeout(slowConnectTimerRef.current)
-
-        if (mountedRef.current) reconnectTimerRef.current = setTimeout(() => connectChat(user), 5000)
-      } finally {
-        if (reconnectTimerRef.current) clearTimeout(reconnectTimerRef.current)
-        if (slowConnectTimerRef.current) clearTimeout(slowConnectTimerRef.current)
-        connectingInProgressRef.current = false
-      }
-    },
-    [flushMessageQueue],
-  )
-
-  const initialiseUser = (): ChatUser => {
-    const name = `Slime-${Math.floor(Math.random() * 1000)}`
-    const color = getRandomColor()
-    const id = `${name}.${Date.now()}`
-
-    const user = {
-      name,
-      color,
-      id,
-    } as ChatUser
-
-    setUserInfo(user)
-
-    return user
-  }
-
-  const sendMessage = () => {
-    if (chatInputRef.current) {
-      if (!chatConnected || !connectionRef.current) return
-
-      const newMessage = chatInputRef.current.value.trim()
+  const trySend = () => {
+    if (chatInputRef.current && chatConnected) {
+      const newMessage = chatInputRef.current.value
       if (!newMessage) return
 
-      const user = userInfo ?? initialiseUser()
+      chatInstanceRef.current?.sendMessage(newMessage, setDisplayedMessages)
 
-      const messageData = {
-        name: user.name,
-        content: newMessage,
-        type: "user",
-        unixTime: Date.now(),
-        color: user.color,
-      } as UserMessage
-
-      // Optimistically display the message
-      setDisplayedMessages((prevMessages) => [...prevMessages, messageData])
       chatInputRef.current.value = ""
       chatInputRef.current.focus()
-
-      // Send the message if connected, otherwise add to message queue
-      if (chatConnected && connectionRef.current.state === "Connected") {
-        connectionRef.current.invoke("BroadcastMessage", messageData).catch((error) => {
-          console.error("Error sending message:", error)
-        })
-      } else {
-        messageQueueRef.current.push({ message: messageData, createdAt: Date.now() })
-      }
     }
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault()
-      sendMessage()
+      trySend()
     }
   }
 
@@ -153,84 +58,26 @@ export default function Chat() {
         type: "user",
         unixTime: now,
         id: "system." + now,
-      } as UserMessage, // Not actually a system notification
+      } as ConfirmedMessage, // Not actually a system notification
     ])
   }, [])
 
   useEffect(() => {
-    const connection = new HubConnectionBuilder()
-      .withUrl(METADATA_CONFIG.chatServerUrl)
-      .configureLogging(LogLevel.Information)
-      .build()
-
-    connection.on("GetActiveUsers", (activeUsers: ChatUser[]) => {
-      setActiveUsers(activeUsers)
-    })
-    connection.on("GetMessageHistory", (messageHistory: ConfirmedMessage[]) => {
-      setDisplayedMessages((prev) => [...prev, ...messageHistory])
-    })
-    connection.on("UserJoined", (user: ChatUser) => {
-      const newSystemMessage = { content: `${user.name} has joined the chat.`, type: "system" } as SystemMessage
-      setDisplayedMessages((prevMessages) => [...prevMessages, newSystemMessage])
-      setActiveUsers((prevUsers) => [...prevUsers, user])
-    })
-    connection.on("UserLeft", (user: ChatUser) => {
-      const newSystemMessage = { content: `${user.name} left the chat.`, type: "system" } as SystemMessage
-      setDisplayedMessages((prevMessages) => [...prevMessages, newSystemMessage])
-      // Server will now invoke GetActiveUsers
-    })
-
-    // Server confirmed that the message was broadcast
-    connection.on("MessageReceived", (incomingMessage: ConfirmedMessage) => {
-      setDisplayedMessages((prevMessages) => {
-        for (let i = prevMessages.length - 1; i >= 0; i--) {
-          const msg = prevMessages[i]
-          if (msg.type !== "user") continue
-
-          // Loop through messages in reverse to find the uncomfirmed message
-          if (incomingMessage.unixTime === msg.unixTime && incomingMessage.name === msg.name) {
-            const updatedMessages = [...prevMessages]
-            // Replace unconfirmed message with confirmed one
-            updatedMessages[i] = { ...incomingMessage }
-            return updatedMessages
-          }
-        }
-        return [...prevMessages, incomingMessage]
-      })
-    })
-
-    connection.on("ServerMessage", (incomingMessage: UserMessage) => {
-      setDisplayedMessages((prevMessages) => [...prevMessages, { ...incomingMessage, unixTime: Date.now() }])
-    })
-
-    connectionRef.current = connection
-    const user = initialiseUser()
-
-    // Initial connection
-    connectChat(user)
-
+    chatInstanceRef.current = getInstance(setChatConnected, setUserInfo, chatEventHandlers)
     const handleBeforeUnload = () => {
-      connectionRef.current?.stop()
+      ChatConnection.cleanupInstance()
+      chatInstanceRef.current = null
     }
 
     window.addEventListener("beforeunload", handleBeforeUnload)
-
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload)
-      mountedRef.current = false
-      if (reconnectTimerRef.current) clearTimeout(reconnectTimerRef.current)
-      if (slowConnectTimerRef.current) clearTimeout(slowConnectTimerRef.current)
-      connection.off("GetActiveUsers")
-      connection.off("GetMessageHistory")
-      connection.off("UserJoined")
-      connection.off("UserLeft")
-      connection.off("MessageReceived")
-      connection.off("ServerMessage")
-      connectionRef.current?.stop().catch(() => {})
-      connectionRef.current = null
-      connectingInProgressRef.current = false
+      if (chatInstanceRef.current) {
+        ChatConnection.cleanupInstance()
+        chatInstanceRef.current = null
+      }
     }
-  }, [connectChat])
+  }, [])
 
 <<<<<<< HEAD:pages/chat/+Page.tsx
   useAutoScroll(chatHistoryRef as RefObject<HTMLDivElement>, [displayedMessages])
@@ -242,19 +89,20 @@ export default function Chat() {
     <div className="flex h-full gap-0.5">
       <div className="h-full w-1/3 rounded border-2 border-slate-500 bg-gradient-to-br from-neutral-200 via-neutral-300 to-neutral-400">
         <ul className="flex h-full flex-col overflow-auto">
-          {activeUsers.map((user) => {
-            const isMe = userInfo?.name === user.name
-            return (
-              <li
-                key={user.name}
-                className={clsx(
-                  "flex items-center gap-2 rounded border-2 border-white/20 px-2 py-1 shadow-md",
-                  isMe && "font-bold",
-                )}>
-                {user.name} {isMe && "(You)"}
-              </li>
-            )
-          })}
+          {chatConnected &&
+            activeUsers.map((user) => {
+              const isMe = userInfo?.name === user.name
+              return (
+                <li
+                  key={user.name}
+                  className={clsx(
+                    "flex items-center gap-2 rounded border-2 border-white/20 px-2 py-1 shadow-md",
+                    isMe && "font-bold",
+                  )}>
+                  {user.name} {isMe && "(You)"}
+                </li>
+              )
+            })}
         </ul>
       </div>
       <div className="flex h-full w-full flex-col justify-around">
@@ -274,7 +122,9 @@ export default function Chat() {
                     <p className="text-lg font-bold" style={{ color: message.color }}>
                       {message.name}
                     </p>
-                    <p className="text-end text-sm text-gray-500">at {formatTime(message.unixTime)}</p>
+                    <p className="text-end text-sm text-gray-500">
+                      at {new Date(message.unixTime).toLocaleTimeString()}
+                    </p>
                   </>
                 )}
               </div>
@@ -316,13 +166,14 @@ export default function Chat() {
             onBlur={() => setChatInputFocused(false)}
             name="chat"
             className="h-full w-full grow resize-none overflow-auto p-1 focus:outline-none"
-            onKeyDown={handleKeyDown}></textarea>
+            onKeyDown={handleKeyDown}
+          />
           <button
             className={clsx(
               "font-ui m-2 mr-4 flex h-12 cursor-active items-center justify-center rounded border border-slate-600 bg-slate-200 px-6 py-4 text-center font-bold text-slate-600 shadow-md",
               chatConnected ? "hover:bg-green-300" : "hover:bg-red-300",
             )}
-            onClick={sendMessage}>
+            onClick={trySend}>
             Send
           </button>
         </div>

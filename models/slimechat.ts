@@ -1,3 +1,6 @@
+export type MessageQueue = Array<{ message: UserMessage; createdAt: number }>
+
+// Shared server types
 type Username = string
 export type Color =
   | "#ef4444" // red
@@ -49,3 +52,5 @@ export interface SystemMessage extends Message {
   type: "system"
   color?: Color
 }
+
+export type DisplayedMessages = (UserMessage | ConfirmedMessage | SystemMessage)[]

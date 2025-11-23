@@ -115,15 +115,6 @@ export const getRandomColor = (): Color => {
   return colors[Math.floor(Math.random() * colors.length)]
 }
 
-export const formatTime = (unixTime: number): string => {
-  return new Date(unixTime).toLocaleString("en-NZ", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: false,
-  })
-}
-
 export const getNextCritPosition = (
   existingCrits: Array<{ id: string; damage: number; timestamp: number; position: { x: number; y: number } }> | [],
 ): { x: number; y: number } => {
