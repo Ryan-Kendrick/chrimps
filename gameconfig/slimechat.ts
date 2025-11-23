@@ -60,7 +60,9 @@ class ChatConnection {
     const { getActiveUsers, getMessageHistory, userLeft, messageReceived, serverMessage, userJoined } = eventHandlers
 
     this._connection.on("GetActiveUsers", (activeUsers: ChatUser[]) => getActiveUsers(activeUsers))
-    this._connection.on("GetMessageHistory", (messageHistory: ConfirmedMessage[]) => getMessageHistory(messageHistory))
+    this._connection.on("GetMessageHistory", (messageHistory: ConfirmedMessage[]) =>
+      getMessageHistory((prev) => [...prev, ...messageHistory]),
+    )
     this._connection.on("UserJoined", (joinedUser: ChatUser) => {
       const [messageSetter, userSetter] = userJoined
       const userJoinedMessage = { content: `${joinedUser.name} has joined the chat.`, type: "system" } as SystemMessage

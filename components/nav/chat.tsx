@@ -50,7 +50,8 @@ export default function Chat() {
     }
     mountedRef.current = true
     const now = Date.now()
-    setDisplayedMessages([
+    setDisplayedMessages((prev) => [
+      ...prev,
       {
         userId: "System-32." + now,
         name: "🖥️ System",
@@ -79,11 +80,7 @@ export default function Chat() {
     }
   }, [])
 
-<<<<<<< HEAD:pages/chat/+Page.tsx
-  useAutoScroll(chatHistoryRef as RefObject<HTMLDivElement>, [displayedMessages])
-=======
   useAutoScroll(chatHistoryRef as React.RefObject<HTMLDivElement>, [displayedMessages])
->>>>>>> dd393fe856d8201094ed49a401caa6021f9ecbcb:components/nav/chat.tsx
 
   return (
     <div className="flex h-full gap-0.5">
