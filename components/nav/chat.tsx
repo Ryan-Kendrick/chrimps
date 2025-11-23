@@ -50,8 +50,7 @@ export default function Chat() {
     }
     mountedRef.current = true
     const now = Date.now()
-    setDisplayedMessages((prev) => [
-      ...prev,
+    setDisplayedMessages([
       {
         userId: "System-32." + now,
         name: "🖥️ System",
