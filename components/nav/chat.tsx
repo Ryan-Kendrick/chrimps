@@ -27,7 +27,8 @@ export default function Chat() {
   const trySend = () => {
     if (chatInputRef.current && chatConnected) {
       const newMessage = chatInputRef.current.value
-      if (!newMessage) return
+      const hasContent = newMessage.trim() !== ""
+      if (!hasContent) return
 
       chatInstanceRef.current?.sendMessage(newMessage, setDisplayedMessages)
 
@@ -124,7 +125,11 @@ export default function Chat() {
                   </>
                 )}
               </div>
-              <p className={clsx(message.type === "system" ? "ml-2 text-sm text-slate-600" : "ml-4")}>
+              <p
+                className={clsx(
+                  "whitespace-pre-wrap",
+                  message.type === "system" ? "ml-2 text-sm text-slate-600" : "ml-4",
+                )}>
                 {message.content}
               </p>
             </div>
