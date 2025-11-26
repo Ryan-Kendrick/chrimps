@@ -23,6 +23,7 @@ export default function Chat() {
     messageReceived: setDisplayedMessages,
     serverMessage: setDisplayedMessages,
   } as EventHandlers
+  const formatMessage = chatInstanceRef.current?.formatMessage
 
   const trySend = () => {
     if (chatInputRef.current && chatConnected) {
@@ -83,7 +84,7 @@ export default function Chat() {
   useAutoScroll(chatHistoryRef as React.RefObject<HTMLDivElement>, [displayedMessages])
 
   return (
-    <div className="flex h-full gap-0.5">
+    <div className="flex h-full grow gap-0.5 overflow-clip">
       <div className="h-full w-1/3 rounded border-2 border-slate-500 bg-gradient-to-br from-neutral-200 via-neutral-300 to-neutral-400">
         <ul className="flex h-full flex-col overflow-auto">
           {chatConnected &&
@@ -106,7 +107,9 @@ export default function Chat() {
         <h2 className="w-full text-center font-sigmar text-4xl text-green-600">Slime Chat</h2>
 
         {/* Chat history */}
-        <div ref={chatHistoryRef} className="flex h-full w-full flex-col items-start overflow-auto px-4">
+        <div
+          ref={chatHistoryRef}
+          className="flex h-full w-full flex-col items-start overflow-y-auto overflow-x-clip px-4">
           {displayedMessages.map((message, i) => (
             <div
               key={i}
@@ -127,10 +130,13 @@ export default function Chat() {
               </div>
               <p
                 className={clsx(
-                  "whitespace-pre-wrap",
+                  "whitespace-pre-wrap break-all",
                   message.type === "system" ? "ml-2 text-sm text-slate-600" : "ml-4",
+                  message.type === "system" && "text-center",
+                  message.content.startsWith("/me") && "italic text-gray-500",
+                  message.content.startsWith("/ascii") && "font-mono",
                 )}>
-                {message.content}
+                {formatMessage && formatMessage(message)}
               </p>
             </div>
           ))}

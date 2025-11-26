@@ -3,6 +3,7 @@ import {
   ChatUser,
   ConfirmedMessage,
   DisplayedMessages,
+  Message,
   MessageQueue,
   SystemMessage,
   UserMessage,
@@ -209,6 +210,13 @@ class ChatConnection {
     } else {
       this._messageQueue.push({ message: messageData, createdAt: Date.now() })
     }
+  }
+
+  public formatMessage(message: Message): string {
+    if (message.content.startsWith("/me ")) return message.content.slice(4)
+    if (message.content.startsWith("/ascii ")) return message.content.slice(7)
+
+    return message.content
   }
 
   public static cleanupInstance() {

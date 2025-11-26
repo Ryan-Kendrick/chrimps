@@ -155,6 +155,7 @@ const chatStyle: ModalStylesheet = {
     right: "5%",
     bottom: "5%",
     left: "5%",
+    minWidth: "420px",
     border: "2px solid #ffcf40",
     background: "#FFF",
     boxShadow: "rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px",
