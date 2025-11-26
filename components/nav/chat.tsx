@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react"
 import { ChatUser, ConfirmedMessage, MessageQueue, SystemMessage, UserMessage } from "../../models/slimechat"
-import getInstance, { ChatConnection, EventHandlers } from "../../gameconfig/slimechat"
+import getInstance, { ChatConnection, EventHandlers, loadingSlime } from "../../gameconfig/slimechat"
 import { useAutoScroll } from "../../gameconfig/customHooks"
 import clsx from "clsx/lite"
 
@@ -11,7 +11,7 @@ export default function Chat() {
   const [chatConnected, setChatConnected] = useState(true)
   const chatInstanceRef = useRef<ChatConnection | null>(null)
   const [userInfo, setUserInfo] = useState<ChatUser | null>(null)
-  const mountedRef = useRef(false)
+  const [fadeIn, setFadeIn] = useState(false)
   const chatHistoryRef = useRef<HTMLDivElement>(null)
   const chatInputRef = useRef<HTMLTextAreaElement>(null)
 
@@ -50,7 +50,6 @@ export default function Chat() {
       chatInputRef.current.focus()
       chatInputRef.current?.setSelectionRange(0, 0)
     }
-    mountedRef.current = true
     const now = Date.now()
     setDisplayedMessages([
       {
@@ -70,6 +69,7 @@ export default function Chat() {
       ChatConnection.cleanupInstance()
       chatInstanceRef.current = null
     }
+    const fadeTimeout = window.setTimeout(() => setFadeIn(true), 300)
 
     window.addEventListener("beforeunload", handleBeforeUnload)
     return () => {
@@ -78,6 +78,7 @@ export default function Chat() {
         ChatConnection.cleanupInstance()
         chatInstanceRef.current = null
       }
+      window.clearTimeout(fadeTimeout)
     }
   }, [])
 
@@ -109,7 +110,16 @@ export default function Chat() {
         {/* Chat history */}
         <div
           ref={chatHistoryRef}
-          className="flex h-full w-full flex-col items-start overflow-y-auto overflow-x-clip px-4">
+          className="relative flex h-full w-full flex-col items-start overflow-y-auto overflow-x-clip px-4">
+          {activeUsers.length === 0 && displayedMessages.length === 1 && (
+            <span
+              className={clsx(
+                "absolute left-1/2 top-2 -translate-x-1/2 whitespace-pre-wrap break-all font-mono text-[10px] leading-3 text-emerald-800 text-opacity-80 transition-opacity duration-700",
+                fadeIn ? "opacity-100" : "opacity-0",
+              )}>
+              {loadingSlime}
+            </span>
+          )}
           {displayedMessages.map((message, i) => (
             <div
               key={i}

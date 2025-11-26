@@ -247,5 +247,59 @@ class ChatConnection {
   }
 }
 
+export const loadingSlime = `         e                            UUTTTTTeeTTeeeeeeeTTTTeTeeT                      T          
+          TT                      TUTeTeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeTTTS                TT         
+         Teee                 TeTeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeTeTe           TeeT        
+         TeeeT             UTTeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee6       eTeeT        
+        eeeeeTe          eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeTT    TeeeeeT       
+        eeeeeeeee     UTeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeTTeTeeeeeeT       
+        TeeeeeeeeTeeeTeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeT       
+         TeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeTž       
+         TeeeeeeeeeeeeeeeeeeeeeeeeeeTTTTTTeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeTTTeeeeeeeeeeeT        
+          TeeeeeeeeeeeeeeeeeeeeeeTT       eTTeeeeeeeeeeeeeeeeeeeeeeeeeeeeTTT    UeeeeeeeeeT         
+           UTeeeeeeeeeeeeeeeeeeeeT           žeTeeeeeeeeeeeeeeeeeeeeeeTTž        UTeeeeeeT          
+             TTeeeeeeeeeeeeeeeeeeT              TeeeeeeeeeeeeeeeeeeeTT            TTeeeeeT          
+              eeeeeeeeeeeeeeeeeeeeU               TeeeeeeeeeeeeeeeeeU              žTeeeeeT         
+              Teeeeeeeeeeeeeeeeeeeee               eTeeeeeeeeeeeeTe               UTeeeeeeT         
+              eeeeeeeeeeeeeeeeeeeeeeeTT             UTeeeeeeeeeeeU              UTeeeeeeeeT         
+              eeeeeeeeeeeeeeeeeeeeeeeeeeTeTTTTTTTTTTTTeeeeeeeeeeTTTTTTTTTTTTTeeeeeeeeeeeeeU         
+             Ueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeež         
+             TeeeeeeeeeeeeeeeeeeeeTeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeTeeeeeeeT          
+             eeeeeeeeeeeeeeeeeeeTe eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeTT UTeeeeee          
+             eeeeeeeeeeeeeeeeeeeTS   TTeeeeeeeeeeeeeeeeeeeeeeeeeeeTTTTeeeeeeeTT   UTeeeee           
+             TeeeeeeeeeeeeeeeeeeeTe    TeeeeeeeeTTeeeTeeeeeeeeeeTe    UeTeeTT    eeeeeeee           
+             eeeeeeeeeeeeeeeeeeeeeeeT    TeeeTTT      eeeeeeeeTT   UT    že6   TeeeeeeeT            
+             TeeeeeeeeeeeeeeeeeeeeeeeTe   žež     UU    Teeee6    eeeTTe     UTeeeeeeeTe            
+             eeeeeeeeeeeeeeeeeeeeeeeeeeTe     UTTeeeTe    UT    TTeeeeeeTeTeTeeeeeeeeeT             
+             eeeeeeeeTTTeeeeeeeeeeeeeeeeeeSSTTeeeeeeeeTU      TTeeeeeeeeeeeeeeeeeeeeee              
+             eeeeeeeT    eTeeeeeeeeeeeeeeeTeeeeeeeeeeeeeTT  eTeeeeeeeeeeeeeeeeeeeeeeeT              
+             eeeeeeT      TeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeTeeeeeTTTeUTeeeeTeUTTeeeeeT               
+              eeeeT        eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeTe      TeeeU   eeeeeeT               
+              UeTT          TTeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeT       eeeeU    Teeeee               
+                             eeeeeeeeeeeeeeeeeeeeeTT6 TeeeeeeT        TeeeU    eeeeT                
+                              TeeeeTTTUTeeeeeeeeeT     TeeeeeT        TeeeT     eeeT                
+              eTTTž           TeeTU     UeeeeeeeT      eeeeeeT        eeeeT     eeee                
+            TTeeeeeT          Ueee        TeeeeT        eeeeeT       TeeeeT    UeeeT                
+            TeeeeeeeT         Uee         UeeeeT        eeeeee       eeeeee    eeeeT                
+            TeeeeeeeU         Teež         Teee         eeeeeT       eeeeee    TeeeeT               
+             eTeeeTe          TeeT         eeeT         eeeeeT       eTeeTT   TeeeeeeT              
+               žT           eTeeeeTe       6eee         TeeeeT               TeeeeeeeTe             
+                           TTeeeeeeee       eee         TeeeeT              žTeeeeeeeeT             
+                           TeeeeeeeeT       eeež        Teeeee              TeeeeeeeeeeT            
+                           TTeeeeeeeT      eeeee         eTTT               TeeeeeeeeeeT            
+                            žTTeeTTU       TeeeT                            TeeeeeeeeeeT            
+                                          Ueeeeee         Tž                 Teeeeeeeee             
+                                         Teeeeeeeež     TTeeeT                UTTTTTTT              
+                                        TeeeeeeeeeTT   UeeeeeeT                                     
+                                       TeeeeeeeeeeeeT  STeeeeTU                                     
+                                      eeeeeeeeeeeeeeTe   TTTe                                       
+                                      Teeeeeeeeeeeeeee                                              
+                                      TeeeeeeeeeeeeeeT                                              
+                                      eeeeeeeeeeeeeeT                                               
+                                       TeeeeeeeeeeeT                                                
+                                         TeTeeeeTeU                                                 
+                                             eU                                                     
+                                                                                                    `
+
 export { ChatConnection }
 export default ChatConnection.getInstance
