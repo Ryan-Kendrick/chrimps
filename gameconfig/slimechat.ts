@@ -97,10 +97,6 @@ class ChatConnection {
       serverMessage((messageHistory) => [...messageHistory, incomingMessage])
     })
 
-    // this._connection.onclose(() => {
-    //   console.warn("Chat connection closed")
-    //   isConnectedSetterFn(false)
-    // })
     this._connection.onreconnecting(() => {
       console.warn("Chat connection lost, attempting to reconnect...")
       isConnectedSetterFn(false)
