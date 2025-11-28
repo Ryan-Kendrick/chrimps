@@ -72,12 +72,10 @@ class ChatConnection {
       userSetter((users) => [...users, joinedUser])
       // Server will now invoke GetActiveUsers
     })
-
     this._connection.on("UserLeft", (disconnectedUser: ChatUser) => {
       const userLeftMessage = { content: `${disconnectedUser.name} left the chat.`, type: "system" } as SystemMessage
       userLeft((messageHistory) => [...messageHistory, userLeftMessage])
     })
-
     this._connection.on("MessageReceived", (incomingMessage: ConfirmedMessage) => {
       messageReceived((prevMessages) => {
         for (let i = prevMessages.length - 1; i >= 0; i--) {
@@ -95,9 +93,27 @@ class ChatConnection {
         return [...prevMessages, incomingMessage]
       })
     })
-
     this._connection.on("ServerMessage", (incomingMessage: ConfirmedMessage) => {
       serverMessage((messageHistory) => [...messageHistory, incomingMessage])
+    })
+
+    // this._connection.onclose(() => {
+    //   console.warn("Chat connection closed")
+    //   isConnectedSetterFn(false)
+    // })
+    this._connection.onreconnecting(() => {
+      console.warn("Chat connection lost, attempting to reconnect...")
+      isConnectedSetterFn(false)
+      if (!ChatConnection._reconnectTimer) {
+        ChatConnection._reconnectTimer = setTimeout(() => {
+          this.connect(isConnectedSetterFn)
+        }, 60000)
+      }
+    })
+    this._connection.onreconnected(() => {
+      console.log("Chat reconnected.")
+      isConnectedSetterFn(true)
+      this.onConnectTasks()
     })
 
     this.connect(isConnectedSetterFn)
@@ -247,59 +263,45 @@ class ChatConnection {
   }
 }
 
-export const loadingSlime = `         e                            UUTTTTTeeTTeeeeeeeTTTTeTeeT                      T          
-          TT                      TUTeTeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeTTTS                TT         
-         Teee                 TeTeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeTeTe           TeeT        
-         TeeeT             UTTeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee6       eTeeT        
-        eeeeeTe          eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeTT    TeeeeeT       
-        eeeeeeeee     UTeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeTTeTeeeeeeT       
-        TeeeeeeeeTeeeTeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeT       
-         TeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeTž       
-         TeeeeeeeeeeeeeeeeeeeeeeeeeeTTTTTTeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeTTTeeeeeeeeeeeT        
-          TeeeeeeeeeeeeeeeeeeeeeeTT       eTTeeeeeeeeeeeeeeeeeeeeeeeeeeeeTTT    UeeeeeeeeeT         
-           UTeeeeeeeeeeeeeeeeeeeeT           žeTeeeeeeeeeeeeeeeeeeeeeeTTž        UTeeeeeeT          
-             TTeeeeeeeeeeeeeeeeeeT              TeeeeeeeeeeeeeeeeeeeTT            TTeeeeeT          
-              eeeeeeeeeeeeeeeeeeeeU               TeeeeeeeeeeeeeeeeeU              žTeeeeeT         
-              Teeeeeeeeeeeeeeeeeeeee               eTeeeeeeeeeeeeTe               UTeeeeeeT         
-              eeeeeeeeeeeeeeeeeeeeeeeTT             UTeeeeeeeeeeeU              UTeeeeeeeeT         
-              eeeeeeeeeeeeeeeeeeeeeeeeeeTeTTTTTTTTTTTTeeeeeeeeeeTTTTTTTTTTTTTeeeeeeeeeeeeeU         
-             Ueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeež         
-             TeeeeeeeeeeeeeeeeeeeeTeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeTeeeeeeeT          
-             eeeeeeeeeeeeeeeeeeeTe eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeTT UTeeeeee          
-             eeeeeeeeeeeeeeeeeeeTS   TTeeeeeeeeeeeeeeeeeeeeeeeeeeeTTTTeeeeeeeTT   UTeeeee           
-             TeeeeeeeeeeeeeeeeeeeTe    TeeeeeeeeTTeeeTeeeeeeeeeeTe    UeTeeTT    eeeeeeee           
-             eeeeeeeeeeeeeeeeeeeeeeeT    TeeeTTT      eeeeeeeeTT   UT    že6   TeeeeeeeT            
-             TeeeeeeeeeeeeeeeeeeeeeeeTe   žež     UU    Teeee6    eeeTTe     UTeeeeeeeTe            
-             eeeeeeeeeeeeeeeeeeeeeeeeeeTe     UTTeeeTe    UT    TTeeeeeeTeTeTeeeeeeeeeT             
-             eeeeeeeeTTTeeeeeeeeeeeeeeeeeeSSTTeeeeeeeeTU      TTeeeeeeeeeeeeeeeeeeeeee              
-             eeeeeeeT    eTeeeeeeeeeeeeeeeTeeeeeeeeeeeeeTT  eTeeeeeeeeeeeeeeeeeeeeeeeT              
-             eeeeeeT      TeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeTeeeeeTTTeUTeeeeTeUTTeeeeeT               
-              eeeeT        eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeTe      TeeeU   eeeeeeT               
-              UeTT          TTeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeT       eeeeU    Teeeee               
-                             eeeeeeeeeeeeeeeeeeeeeTT6 TeeeeeeT        TeeeU    eeeeT                
-                              TeeeeTTTUTeeeeeeeeeT     TeeeeeT        TeeeT     eeeT                
-              eTTTž           TeeTU     UeeeeeeeT      eeeeeeT        eeeeT     eeee                
-            TTeeeeeT          Ueee        TeeeeT        eeeeeT       TeeeeT    UeeeT                
-            TeeeeeeeT         Uee         UeeeeT        eeeeee       eeeeee    eeeeT                
-            TeeeeeeeU         Teež         Teee         eeeeeT       eeeeee    TeeeeT               
-             eTeeeTe          TeeT         eeeT         eeeeeT       eTeeTT   TeeeeeeT              
-               žT           eTeeeeTe       6eee         TeeeeT               TeeeeeeeTe             
-                           TTeeeeeeee       eee         TeeeeT              žTeeeeeeeeT             
-                           TeeeeeeeeT       eeež        Teeeee              TeeeeeeeeeeT            
-                           TTeeeeeeeT      eeeee         eTTT               TeeeeeeeeeeT            
-                            žTTeeTTU       TeeeT                            TeeeeeeeeeeT            
-                                          Ueeeeee         Tž                 Teeeeeeeee             
-                                         Teeeeeeeež     TTeeeT                UTTTTTTT              
-                                        TeeeeeeeeeTT   UeeeeeeT                                     
-                                       TeeeeeeeeeeeeT  STeeeeTU                                     
-                                      eeeeeeeeeeeeeeTe   TTTe                                       
-                                      Teeeeeeeeeeeeeee                                              
-                                      TeeeeeeeeeeeeeeT                                              
-                                      eeeeeeeeeeeeeeT                                               
-                                       TeeeeeeeeeeeT                                                
-                                         TeTeeeeTeU                                                 
-                                             eU                                                     
-                                                                                                    `
+export const loadingSlime = `
+                             eeTeeTTTTTTTTUTee                         
+       Te               TTTTeeeeeeeeeeeeeeeeeeeTTTUe           eU      
+      TeTe           eTTeeeeeeeeeeeeeeeeeeeeeeeeeeeeTTU       Teee     
+      TeeTT       TTeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeTTT   eeeeT     
+      eeeeeTU  UTTeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeTeTeeeeT     
+      TeeeeeeTeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee     
+      žTeeeeeeeeeeeeeeeeeTTTTTeeeeeeeeeeeeeeeeeeeeeeeeTTTeeeeeeee      
+       TeeeeeeeeeeeeeeeTe     žeeeeeeeeeeeeeeeeeeeTTU    UeeeeeT       
+        6TTeeeeeeeeeeeee         žTeeeeeeeeeeeeeTT        TTeeeT       
+          TeeeeeeeeeeeeeT          6TeeeeeeeeeeTe          eeeeee      
+          TeeeeeeeeeeeeeeeT         STeeeeeeeeT          UTeeeeee      
+         TeeeeeeeeeeeeeeeeeeTTTTTTTTTTeeeeeeeeeTTTTTTTTTeeeeeeeež      
+         Ueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee       
+         eeeeeeeeeeeeeeTUeTeeeeeeeeeeeeeeeeeeeeeeeeeeeeeTTeTeeeT       
+         eeeeeeeeeeeeeeTU UeeeeeeeeeeTeeeeeeeeTeTTeeeeTT  Teeee        
+         eeeeeeeeeeeeeeeeT  6TeeeTe   TTeeeeTT  U  UTT  eTeeeeT        
+         Teeeeeeeeeeeeeeeeee  TT  TeeT  TeTT  TTeeTž  UTeeeeee         
+         TeeeeeTTeeeeeeeeeeeeU TeeeeeeTž U  TTeeeeeeTTeeeeeeež         
+         eeeeeT  TTeeeeeeeeeeeTeeeeeeeeTeUeTeeeeeeeeeeeeeeeeT          
+         žeeeT     Teeeeeeeeeeeeeeeeeeeeeeeeee   eeeTUžTeeeee          
+          TTT       TeeeeeeeeeeeeeeeeeeeeeeeT     TeT   eeeT           
+                     TeeeeTTeeeeeeeTTeUTeeeT      eeT   UeeT           
+           T         TeeT   TTeeeeT    TeeeT     eeeT   6eeT           
+        eTeeeTT      TeT     eeeeT     TeeeT     Teeee  UeeT           
+        TeeeeeT      UeT      TeeT     UeeeT     eeeeU  TeeT           
+        eTeeeTT      TeTT      eeU     TeeeT     TTTT  Teeeee          
+                    TeeeTU     eee     UeeeT          TTeeeeee         
+                   eeeeeee     TeT      eeeT          TeeeeeeeU        
+                   TeeeeeT     TeT      TTTU          TeeeeeeeU        
+                     eTTe     eeeeT                   eTeeeeeT         
+                             TeeeeeT   TTeeT           SeTTTž          
+                            TeeeeeeeT  TeeeeT                          
+                           eeeeeeeeeee  TTTe                           
+                           eeeeeeeeeeT                                 
+                           TeeeeeeeeeT                                 
+                            eeeeeeeTe                                  
+                             eTTeTT                                    
+                                                                       `
 
 export { ChatConnection }
 export default ChatConnection.getInstance

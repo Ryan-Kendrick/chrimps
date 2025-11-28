@@ -14,6 +14,7 @@ export default function Chat() {
   const [fadeIn, setFadeIn] = useState(false)
   const chatHistoryRef = useRef<HTMLDivElement>(null)
   const chatInputRef = useRef<HTMLTextAreaElement>(null)
+  const awaitingFirstConnection = activeUsers.length === 0 && displayedMessages.length === 1
 
   const chatEventHandlers = {
     getActiveUsers: setActiveUsers,
@@ -111,45 +112,49 @@ export default function Chat() {
         <div
           ref={chatHistoryRef}
           className="relative flex h-full w-full flex-col items-start overflow-y-auto overflow-x-clip px-4">
-          {activeUsers.length === 0 && displayedMessages.length === 1 && (
+          {/* Loading slime */}
+          {awaitingFirstConnection && (
             <span
               className={clsx(
-                "absolute left-1/2 top-2 -translate-x-1/2 whitespace-pre-wrap break-all font-mono text-[10px] leading-3 text-emerald-800 text-opacity-80 transition-opacity duration-700",
+                "absolute left-1/2 top-1/3 -translate-x-1/2 -translate-y-1/3 whitespace-pre-wrap break-all font-mono text-[10px] leading-3 text-emerald-800 text-opacity-80 transition-opacity duration-700",
                 fadeIn ? "opacity-100" : "opacity-0",
               )}>
               {loadingSlime}
             </span>
           )}
-          {displayedMessages.map((message, i) => (
-            <div
-              key={i}
-              className="flex flex-col"
-              // Transparency for unconfirmed user messages
-              style={{ opacity: (message.type === "user" && "id" in message) || message.type === "system" ? 1 : 0.3 }}>
-              <div className="flex items-center gap-1">
-                {message.type === "user" && (
-                  <>
-                    <p className="text-lg font-bold" style={{ color: message.color }}>
-                      {message.name}
-                    </p>
-                    <p className="text-end text-sm text-gray-500">
-                      at {new Date(message.unixTime).toLocaleTimeString()}
-                    </p>
-                  </>
-                )}
+          {!awaitingFirstConnection &&
+            displayedMessages.map((message, i) => (
+              <div
+                key={i}
+                className="flex flex-col"
+                // Transparency for unconfirmed user messages
+                style={{
+                  opacity: (message.type === "user" && "id" in message) || message.type === "system" ? 1 : 0.3,
+                }}>
+                <div className="flex items-center gap-1">
+                  {message.type === "user" && (
+                    <>
+                      <p className="text-lg font-bold" style={{ color: message.color }}>
+                        {message.name}
+                      </p>
+                      <p className="text-end text-sm text-gray-500">
+                        at {new Date(message.unixTime).toLocaleTimeString()}
+                      </p>
+                    </>
+                  )}
+                </div>
+                <p
+                  className={clsx(
+                    "whitespace-pre-wrap break-all",
+                    message.type === "system" ? "ml-2 text-sm text-slate-600" : "ml-4",
+                    message.type === "system" && "text-center",
+                    message.content.startsWith("/me") && "italic text-gray-500",
+                    message.content.startsWith("/ascii") && "font-mono",
+                  )}>
+                  {formatMessage && formatMessage(message)}
+                </p>
               </div>
-              <p
-                className={clsx(
-                  "whitespace-pre-wrap break-all",
-                  message.type === "system" ? "ml-2 text-sm text-slate-600" : "ml-4",
-                  message.type === "system" && "text-center",
-                  message.content.startsWith("/me") && "italic text-gray-500",
-                  message.content.startsWith("/ascii") && "font-mono",
-                )}>
-                {formatMessage && formatMessage(message)}
-              </p>
-            </div>
-          ))}
+            ))}
         </div>
 
         <div
