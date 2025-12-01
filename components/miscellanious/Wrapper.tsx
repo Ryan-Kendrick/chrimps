@@ -6,6 +6,7 @@ import { selectPrestigeCount } from "../../redux/statsSlice"
 import { selectCurrentZoneNumber } from "../../redux/zoneSlice"
 import { UPGRADE_CONFIG } from "../../gameconfig/upgrades"
 import clsx from "clsx/lite"
+import Navigation from "../nav/navigation"
 
 export default function Wrapper({ children }: PropsWithChildren) {
   // Reverse OS DPI scaling so the game looks as intended on high resolution displays
@@ -29,6 +30,9 @@ export default function Wrapper({ children }: PropsWithChildren) {
   const breakpoint = useAppSelector(selectBreakpoint)
   useBreakpointObserver(breakpoint)
 
+  const renderDesktopNavigation = breakpoint >= 1024
+
+
   // Force component remount on prestige
   const prestigeCount = useAppSelector(selectPrestigeCount)
 
@@ -44,6 +48,11 @@ export default function Wrapper({ children }: PropsWithChildren) {
           "lg:[@media(max-height:898px)]:max-h-auto lg:[@media(max-height:898px)]:h-auto lg:[@media(max-height:898px)]:overflow-y-auto lg:[@media(max-height:898px)]:overflow-x-hidden",
       )}>
       <div className="relative z-0 flex h-full w-full flex-col-reverse overflow-hidden bg-amber-200 md:flex-col lg:pt-1 lg:[@media(max-height:898px)]:min-h-[906px] lg:[@media(max-height:898px)]:pb-3">
+        {!renderDesktopNavigation && (
+          <div className="flex-none lg:hidden">
+            <Navigation />
+          </div>
+        )}
         {children}
       </div>
     </div>
