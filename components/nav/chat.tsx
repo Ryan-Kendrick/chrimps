@@ -60,7 +60,7 @@ export default function Chat() {
         type: "user",
         unixTime: now,
         id: "system." + now,
-      } as ConfirmedMessage, // Not actually a system notification
+      } as ConfirmedMessage, // Server messages appear as special chat messages rather than notifications
     ])
   }, [])
 
