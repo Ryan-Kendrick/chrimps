@@ -9,7 +9,7 @@ import { GameEngineProvider } from "./Engine"
 export default function Main() {
   const delta = useAppSelector(selectLongCatchupDelta)
   const breakpoint = useAppSelector(selectBreakpoint)
-  const renderDesktopNavigation = breakpoint >= 1024
+  const renderDesktopNavigation = breakpoint > 1024
 
   return (
     <>
@@ -21,7 +21,7 @@ export default function Main() {
           <div className="relative flex w-full flex-col-reverse lg:flex-row">
             <PanelIndex />
             <CombatIndex>
-              {!renderDesktopNavigation && <Navigation />}
+              {renderDesktopNavigation && <Navigation />}
             </CombatIndex>
           </div>
         </main>
