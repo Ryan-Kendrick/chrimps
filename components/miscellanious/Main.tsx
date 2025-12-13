@@ -1,5 +1,5 @@
 import { useAppSelector } from "../../redux/hooks"
-import { selectLongCatchupDelta, selectLongCatchupProcessed } from "../../redux/metaSlice"
+import { selectBreakpoint, selectLongCatchupDelta } from "../../redux/metaSlice"
 import CombatIndex from "../combat/combatIndex"
 import PanelIndex from "../metapanel/panelIndex"
 import FullscreenCatchup from "./FullscreenCatchup"
@@ -8,6 +8,8 @@ import { GameEngineProvider } from "./Engine"
 
 export default function Main() {
   const delta = useAppSelector(selectLongCatchupDelta)
+  const breakpoint = useAppSelector(selectBreakpoint)
+  const renderDesktopNavigation = breakpoint > 1024
 
   return (
     <>
@@ -19,7 +21,7 @@ export default function Main() {
           <div className="relative flex w-full flex-col-reverse lg:flex-row">
             <PanelIndex />
             <CombatIndex>
-              <Navigation />
+              {renderDesktopNavigation && <Navigation />}
             </CombatIndex>
           </div>
         </main>

@@ -17,9 +17,6 @@ export default function Page() {
     <React.StrictMode>
       <Provider store={store}>
         <Wrapper>
-          <div className="flex-none lg:hidden">
-            <Navigation />
-          </div>
           <Main />
           <Loading />
           <Fading />
