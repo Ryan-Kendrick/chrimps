@@ -23,6 +23,8 @@ export default function Chat() {
     userLeft: setDisplayedMessages,
     messageReceived: setDisplayedMessages,
     serverMessage: setDisplayedMessages,
+    updateModifiedMessage: setDisplayedMessages,
+    removeDeletedMessage: setDisplayedMessages,
   } as EventHandlers
   const formatMessage = chatInstanceRef.current?.formatMessage
 

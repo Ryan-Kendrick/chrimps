@@ -25,6 +25,8 @@ export type EventHandlers = {
   userLeft: MessageSetter
   messageReceived: MessageSetter
   serverMessage: MessageSetter
+  updateModifiedMessage: MessageSetter
+  removeDeletedMessage: MessageSetter
 }
 
 class ChatConnection {
@@ -41,6 +43,8 @@ class ChatConnection {
     userLeft: "UserLeft",
     messageReceived: "MessageReceived",
     serverMessage: "ServerMessage",
+    updateModifiedMessage: "UpdateModifiedMessage",
+    removeDeletedMessage: "RemoveDeletedMessage"
   }
   public user: ChatUser
   static ChatInstance: ChatConnection
@@ -58,7 +62,7 @@ class ChatConnection {
     this.user = this.createDefaultUser()
     userInfoSetterFn(this.user)
 
-    const { getActiveUsers, getMessageHistory, userLeft, messageReceived, serverMessage, userJoined } = eventHandlers
+    const { getActiveUsers, getMessageHistory, userLeft, messageReceived, serverMessage, userJoined, updateModifiedMessage, removeDeletedMessage } = eventHandlers
 
     this._connection.on("GetActiveUsers", (activeUsers: ChatUser[]) => getActiveUsers(activeUsers))
     this._connection.on("GetMessageHistory", (messageHistory: ConfirmedMessage[]) =>
@@ -95,6 +99,21 @@ class ChatConnection {
     })
     this._connection.on("ServerMessage", (incomingMessage: ConfirmedMessage) => {
       serverMessage((messageHistory) => [...messageHistory, incomingMessage])
+    })
+    this._connection.on("UpdateModifiedMessage", (modifiedMessage: ConfirmedMessage) => {
+      updateModifiedMessage((prevMessages) => {
+      return prevMessages.map((msg) => {
+        if ("id" in msg && msg.id === modifiedMessage.id) {
+          return modifiedMessage
+        }
+        return msg
+      })
+    })
+    })
+    this._connection.on("RemoveDeletedMessage", (deletedMessage: ConfirmedMessage) => {
+      removeDeletedMessage((prevMessages) => 
+        prevMessages.filter(msg => (!("id" in msg) || (msg.id !== deletedMessage.id)))
+      )
     })
 
     this._connection.onreconnecting(() => {
@@ -236,12 +255,6 @@ class ChatConnection {
       console.warn("No ChatInstance to clean up.")
       return
     }
-
-    // Remove all event handlers - inefficient for a singleton?
-    // const eventNames = Object.values(this.ChatInstance._eventMap)
-    // for (const eventName of eventNames) {
-    //   this.ChatInstance._connection.off(eventName)
-    // }
 
     this.ChatInstance._connection.stop().catch((err) => console.error(err))
     this.ChatInstance = null as unknown as ChatConnection
