@@ -44,7 +44,7 @@ class ChatConnection {
     messageReceived: "MessageReceived",
     serverMessage: "ServerMessage",
     updateModifiedMessage: "UpdateModifiedMessage",
-    removeDeletedMessage: "RemoveDeletedMessage"
+    removeDeletedMessage: "RemoveDeletedMessage",
   }
   public user: ChatUser
   static ChatInstance: ChatConnection
@@ -62,7 +62,16 @@ class ChatConnection {
     this.user = this.createDefaultUser()
     userInfoSetterFn(this.user)
 
-    const { getActiveUsers, getMessageHistory, userLeft, messageReceived, serverMessage, userJoined, updateModifiedMessage, removeDeletedMessage } = eventHandlers
+    const {
+      getActiveUsers,
+      getMessageHistory,
+      userLeft,
+      messageReceived,
+      serverMessage,
+      userJoined,
+      updateModifiedMessage,
+      removeDeletedMessage,
+    } = eventHandlers
 
     this._connection.on("GetActiveUsers", (activeUsers: ChatUser[]) => getActiveUsers(activeUsers))
     this._connection.on("GetMessageHistory", (messageHistory: ConfirmedMessage[]) =>
@@ -102,17 +111,17 @@ class ChatConnection {
     })
     this._connection.on("UpdateModifiedMessage", (modifiedMessage: ConfirmedMessage) => {
       updateModifiedMessage((prevMessages) => {
-      return prevMessages.map((msg) => {
-        if ("id" in msg && msg.id === modifiedMessage.id) {
-          return modifiedMessage
-        }
-        return msg
+        return prevMessages.map((msg) => {
+          if ("id" in msg && msg.id === modifiedMessage.id) {
+            return modifiedMessage
+          }
+          return msg
+        })
       })
     })
-    })
     this._connection.on("RemoveDeletedMessage", (deletedMessage: ConfirmedMessage) => {
-      removeDeletedMessage((prevMessages) => 
-        prevMessages.filter(msg => (!("id" in msg) || (msg.id !== deletedMessage.id)))
+      removeDeletedMessage((prevMessages) =>
+        prevMessages.filter((msg) => !("id" in msg) || msg.id !== deletedMessage.id),
       )
     })
 
