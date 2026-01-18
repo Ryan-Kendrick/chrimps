@@ -206,6 +206,7 @@ class ChatConnection {
   public sendMessage(newMessage: string, messageSetterFn: MessageSetter) {
     const messageData = {
       name: this.user.name,
+      userId: this.user.id,
       content: newMessage,
       type: "user",
       unixTime: Date.now(),
