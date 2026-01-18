@@ -23,6 +23,8 @@ export default function Chat() {
     userLeft: setDisplayedMessages,
     messageReceived: setDisplayedMessages,
     serverMessage: setDisplayedMessages,
+    updateModifiedMessage: setDisplayedMessages,
+    removeDeletedMessage: setDisplayedMessages,
   } as EventHandlers
   const formatMessage = chatInstanceRef.current?.formatMessage
 
@@ -54,7 +56,7 @@ export default function Chat() {
     const now = Date.now()
     setDisplayedMessages([
       {
-        userId: "System-32." + now,
+        userId: "System-32." + 1763414400,
         name: "🖥️ System",
         content: "Welcome to Slime Chat!",
         type: "user",
