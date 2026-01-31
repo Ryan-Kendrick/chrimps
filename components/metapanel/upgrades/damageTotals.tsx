@@ -1,12 +1,7 @@
 import clsx from "clsx"
 import { formatSmallNumber } from "../../../gameconfig/utils"
 import { useAppSelector } from "../../../redux/hooks"
-import {
-  selectClickDamage,
-  selectDotDamage,
-  selectPrestigeTabVisible,
-  selectRespawnTime,
-} from "../../../redux/playerSlice"
+import { selectClickDamage, selectDotDamage, selectHasPlasma, selectRespawnTime } from "../../../redux/playerSlice"
 
 export default function DamageTotals() {
   const clickDamage = useAppSelector(selectClickDamage)
@@ -15,7 +10,7 @@ export default function DamageTotals() {
   const displayDotDamage = formatSmallNumber(dotDamage)
   const respawnTime = useAppSelector(selectRespawnTime)
 
-  const hasPrestiged = useAppSelector(selectPrestigeTabVisible)
+  const hasPrestiged = useAppSelector(selectHasPlasma)
 
   if (!dotDamage && !hasPrestiged) return null
 

@@ -15,7 +15,7 @@ export const PERFORMANCE_CONFIG = {
     0: 4,
     1: 2,
     2: 1,
-  } as Record<0 | 1 | 2, number>,
+  } as Record<AnimationPreference, number>,
   catchup: {
     shortBreakpoint: 300000, // 5 minutes
     longBreakpoint: 1800000, // 30 minutes

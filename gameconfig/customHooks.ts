@@ -19,7 +19,6 @@ import { EnemyState } from "../models/monsters"
 import { enemyAttack, selectBeatDamage, selectDotDamage, selectRespawnTime, setRespawnTime } from "../redux/playerSlice"
 import { store } from "../redux/store"
 import { selectMonsterState } from "../redux/monsterSlice"
-import { usePageContext } from "vike-react/usePageContext"
 import { PageContext } from "vike/types"
 
 export function useForcedDPI(): number {

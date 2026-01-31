@@ -5,7 +5,7 @@ import Prestige from "./prestige/prestige"
 import { Tab, TabData } from "../../models/player"
 import { useAppDispatch, useAppSelector } from "../../redux/hooks"
 import {
-  selectPrestigeTabVisible,
+  selectHasPlasma as selectHasFoundPlasma,
   selectTabInView,
   selectTabAnimationComplete,
   setTabInView,
@@ -24,7 +24,7 @@ export default function PanelIndex() {
 
   const currentZone = useAppSelector(selectCurrentZoneNumber)
   const activeTab = useAppSelector(selectTabInView)
-  const prestigeTabVisible = useAppSelector(selectPrestigeTabVisible)
+  const hasFoundPlasma = useAppSelector(selectHasFoundPlasma)
   const tabAnimationComplete = useAppSelector(selectTabAnimationComplete)
   const breakpoint = useAppSelector(selectBreakpoint)
   const [isWarriorVisible, isHealerVisible, isMageVisible] = [
@@ -58,7 +58,8 @@ export default function PanelIndex() {
       }
 
       if (currentRespawnTime > 0) {
-        const time = currentRespawnTime === respawnTime / 1000 ? 970 : 1000
+        // Faster countdown for the first second so it can flash "0" briefly
+        const time = currentRespawnTime === respawnTime / 1000 ? 910 : 1000
         timerRef.current = setTimeout(() => {
           setCurrentRespawnTime((prev) => Math.max(0, prev - 1))
         }, time)
@@ -92,7 +93,7 @@ export default function PanelIndex() {
       },
     ]
 
-    if (prestigeTabVisible) {
+    if (hasFoundPlasma) {
       tabsToRender.push({
         id: "prestige",
         title: "Prestige",
@@ -103,17 +104,17 @@ export default function PanelIndex() {
     }
 
     return tabsToRender
-  }, [prestigeTabVisible, PlayerHealthMemo])
+  }, [hasFoundPlasma, PlayerHealthMemo])
 
   useEffect(() => {
     if (tabRef.current) {
-      setTabHeight(prestigeTabVisible ? tabRef.current.scrollHeight : 0)
+      setTabHeight(hasFoundPlasma ? tabRef.current.scrollHeight : 0)
       if (oneLineMaskVisible && !tabAnimationComplete) {
         const timeout = setTimeout(() => dispatch(incrementUIProgression()), 1100)
         return () => clearTimeout(timeout)
       }
     }
-  }, [prestigeTabVisible])
+  }, [hasFoundPlasma])
 
   const handleTabChange = (tabId: Tab) => {
     if (tabId !== activeTab) {
@@ -139,20 +140,20 @@ export default function PanelIndex() {
 
     if (activeTab !== "upgrade") return null
     if (!isWarriorVisible) {
-      if (prestigeTabVisible) {
+      if (hasFoundPlasma) {
         chainImg.push("bg-chainsLeftBottom", "bg-chainsRightBottom")
         top -= 285
         mask = "mask-postPrestige"
       }
     } else if (!isMobile) {
       if (!isMageVisible && !isHealerVisible) {
-        if (!oneLineMaskVisible || (!dotDamage && !prestigeTabVisible)) {
+        if (!oneLineMaskVisible || (!dotDamage && !hasFoundPlasma)) {
           // Wait for the cue from heroCard.tsx that the animations are in the right state & damageTotals component visible
           return null
         } else {
           chainImg.push("bg-chainsLeftBottom", "bg-chainsRightBottom")
           top -= 369
-          if (prestigeTabVisible) top += 48
+          if (hasFoundPlasma) top += 48
           mask = "mask-single"
         }
       } else if (isHealerVisible) {
@@ -161,7 +162,7 @@ export default function PanelIndex() {
       }
     } else {
       if (!isMageVisible && !isHealerVisible) {
-        if (!oneLineMaskVisible || (!dotDamage && !prestigeTabVisible)) {
+        if (!oneLineMaskVisible || (!dotDamage && !hasFoundPlasma)) {
           // Warrior unlocked, zone selector not visible
           mask = "mask-mobile-single"
         } else {
@@ -218,7 +219,7 @@ export default function PanelIndex() {
     } else {
       for (let i = 0; i < j || j === 0; i++) {
         let top = 336 + i * 365 // px to gap plus card height
-        if (!prestigeTabVisible) top -= 48
+        if (!hasFoundPlasma) top -= 48
 
         if (j === 0) {
           elements.push(
@@ -335,7 +336,7 @@ export default function PanelIndex() {
         <div
           style={{ height: `${tabHeight}px` }}
           className={clsx(tabAnimationComplete ? "transition-none" : "transition-[height] duration-1000")}>
-          {prestigeTabVisible && (
+          {hasFoundPlasma && (
             <div ref={tabRef} className="z-10 flex h-12 w-full gap-1">
               {tabs.map((tab) => (
                 <button

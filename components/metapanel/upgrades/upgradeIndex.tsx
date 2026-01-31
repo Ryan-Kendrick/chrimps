@@ -4,7 +4,7 @@ import {
   selectGold,
   updateDotDamage,
   updateClickDamage,
-  selectPrestigeTabVisible,
+  selectHasPlasma,
   selectOneLineMaskVisible,
 } from "../../../redux/playerSlice"
 import { selectLevelUpCosts } from "../../../redux/shared/heroSelectors"
@@ -45,7 +45,7 @@ export default function UpgradeIndex({ PlayerHealthMemo }: { PlayerHealthMemo: J
   const gold = useAppSelector(selectGold)
   const { adventurerLevelUpCost, warriorLevelUpCost, healerLevelUpCost, mageLevelUpCost } =
     useAppSelector(selectLevelUpCosts)
-  const hasPrestiged = useAppSelector(selectPrestigeTabVisible)
+  const hasPrestiged = useAppSelector(selectHasPlasma)
   const isHealerVisible = currentZone >= UPGRADE_CONFIG.healer.visibleAtZone
   const isWarriorVisible = currentZone >= UPGRADE_CONFIG.warrior.visibleAtZone
   const isMageVisible = currentZone >= UPGRADE_CONFIG.mage.visibleAtZone
