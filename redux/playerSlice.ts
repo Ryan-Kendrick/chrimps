@@ -53,8 +53,8 @@ const debugState = {
 export const initialState = {
   adventurerLevel: 1,
   adventurerOTPUpgradeCount: 0,
-  warriorLevel: 0,
-  warriorOTPUpgradeCount: 0,
+  warriorLevel: 999,
+  warriorOTPUpgradeCount: 22,
   healerLevel: 0,
   healerOTPUpgradeCount: 0,
   mageLevel: 0,

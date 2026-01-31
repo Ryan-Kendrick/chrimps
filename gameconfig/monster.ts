@@ -241,7 +241,11 @@ class BaseMonster implements BaseEnemy {
   }
   get baseDamage(): number {
     const { baseDamage, exp } = MONSTER_CONFIG.attack
-    return this.level < 30 ? baseDamage : baseDamage + Math.pow(this.level / 30, exp)
+    if (this.level < 30) {
+      return Math.max(1, baseDamage)
+    } else {
+      return Math.max(1, baseDamage + Math.pow(this.level / 30, exp))
+    }
   }
 
   constructor(zoneNumber: number, stageNumber: number, isBoss: boolean) {
