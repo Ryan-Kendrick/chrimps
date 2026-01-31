@@ -39,7 +39,7 @@ const MONSTER_CONFIG: BaseMonsterConfig = {
     exp: 0.75,
     baseAttackRate: 2.4,
   },
-  gold: {
+  goldValue: {
     healthDivisor: 5,
     healthMultiBonus: 1.5,
   },
@@ -49,6 +49,8 @@ const MONSTER_CONFIG: BaseMonsterConfig = {
     plasmaLinGrowth: 3,
     plasmaExpoGrowth: 1.05,
     plasmaValue: function (zoneNumber) {
+      if (zoneNumber < 10) return 0
+
       const linear = this.plasmaBase + (zoneNumber - 10) * this.plasmaLinGrowth
       const expoMulti = Math.pow(this.plasmaExpoGrowth, zoneNumber - 1)
       return Math.round(linear * expoMulti)
@@ -230,13 +232,9 @@ class BaseMonster implements BaseEnemy {
     const stageProgress = (stageInZone - 1) / 29
 
     const zoneScaling = zoneCoeff * Math.pow(zone, zonePower)
-
     const levelScaling = 1 + this.level * levelCoeff
-
     const lateGameBoost = zone > expoStart ? Math.pow(expoGrowth, zone - expoStart) : 1
-
     const stageMulti = stageMin + (stageMax - stageMin) * stageProgress
-
     const health = base * zoneScaling * levelScaling * lateGameBoost * stageMulti
 
     return Math.floor(health)
@@ -261,7 +259,7 @@ class Monster extends BaseMonster implements Enemy {
   attackRate
   image
   goldValue
-  plasma?: number
+  plasmaValue
 
   constructor(config: MonsterType, zoneNumber: number, stageNumber: number, isBoss: boolean) {
     super(zoneNumber, stageNumber, isBoss)
@@ -273,9 +271,9 @@ class Monster extends BaseMonster implements Enemy {
     this.maxHealth = this.health
     this.image = config.imagePath
     const goldMulti = config.goldMulti ?? 1
-    const { healthDivisor, healthMultiBonus } = MONSTER_CONFIG.gold
+    const { healthDivisor, healthMultiBonus } = MONSTER_CONFIG.goldValue
     this.goldValue = Math.floor((this.baseHealth / healthDivisor) * (config.healthMulti * healthMultiBonus) * goldMulti)
-    if (isBoss) this.plasma = MONSTER_CONFIG.boss.plasmaValue(zoneNumber)
+    this.plasmaValue = isBoss ? MONSTER_CONFIG.boss.plasmaValue(zoneNumber) : 0
   }
 }
 
@@ -326,7 +324,7 @@ function serializableMonster(monster: Monster): EnemyState {
     attackRate: monster.attackRate,
     goldValue: monster.goldValue,
     image: monster.image,
-    plasma: monster?.plasma,
+    plasmaValue: monster.plasmaValue,
   }
   return serializable
 }

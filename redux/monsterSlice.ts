@@ -60,7 +60,7 @@ export const selectMonsterState = createSelector(
       attackRate: monster.attackRate,
       alive: monster.alive,
       goldValue: monster.goldValue,
-      plasmaValue: monster?.plasma,
+      plasmaValue: monster.plasmaValue,
       image: monster.image,
     }) as Partial<EnemyState>,
 )

@@ -13,7 +13,7 @@ export interface Enemy {
   attackRate: number
   goldValue: number
   image: string
-  plasma?: number
+  plasmaValue: number
 }
 
 type MonsterKind = "regular" | "rare" | "special" | "boss"
@@ -61,7 +61,7 @@ interface BossConfig {
 export interface BaseMonsterConfig {
   health: HealthConfig
   attack: AttackConfig
-  gold: GoldConfig
+  goldValue: GoldConfig
   boss: BossConfig
   regularSpawnChance: number
   specialSpawnChance: number
