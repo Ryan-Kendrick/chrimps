@@ -42,7 +42,7 @@ const MONSTER_CONFIG: BaseMonsterConfig = {
   goldValue: {
     healthDivisor: 5,
     healthMultiBonus: 1.5,
-    dampenRate: 0.003,
+    dampenRate: 0.002,
   },
   boss: {
     extraLevels: 20,
@@ -62,14 +62,16 @@ export const monsterCalc = {
     const expoMulti = Math.pow(MONSTER_CONFIG.boss.plasmaExpoGrowth, zoneNumber - 1)
     return Math.round(linear * expoMulti)
   },
-  goldValue: (config: MonsterType, baseValue: number, monsterLevel: number): number => {
+  goldValue: (config: MonsterType, zoneNumber: number, baseValue: number, monsterLevel: number): number => {
     const { healthDivisor, healthMultiBonus } = MONSTER_CONFIG.goldValue
     const goldMulti = config.goldMulti ?? 1
-    const dampening = monsterLevel > 30 ? Math.max(0.6, monsterLevel * MONSTER_CONFIG.goldValue.dampenRate) : 1
+    const dampening = zoneNumber > 1 ? Math.max(0.4, 1 - monsterLevel * MONSTER_CONFIG.goldValue.dampenRate) : 1
 
-    return Math.floor(
-      (baseValue / healthDivisor) * (config.healthMulti * healthMultiBonus) * goldMulti * (1 - dampening),
+    const goldValue = Math.floor(
+      (baseValue / healthDivisor) * (config.healthMulti * healthMultiBonus) * goldMulti * dampening,
     )
+
+    return Math.max(1, goldValue)
   },
 }
 
@@ -287,7 +289,7 @@ class Monster extends BaseMonster implements Enemy {
     this.attackRate = this.baseAttackRate * config.attackRateMulti
     this.maxHealth = this.health
     this.image = config.imagePath
-    this.goldValue = monsterCalc.goldValue(config, this.baseHealth, this.level)
+    this.goldValue = monsterCalc.goldValue(config, zoneNumber, this.baseHealth, this.level)
     this.plasmaValue = isBoss ? monsterCalc.plasmaValue(zoneNumber) : 0
   }
 }
