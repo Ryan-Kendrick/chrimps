@@ -36,28 +36,41 @@ const MONSTER_CONFIG: BaseMonsterConfig = {
   },
   attack: {
     baseDamage: 1,
-    exp: 0.75,
+    exp: 0.5,
     baseAttackRate: 2.4,
   },
   goldValue: {
     healthDivisor: 5,
     healthMultiBonus: 1.5,
+    dampenRate: 0.003,
   },
   boss: {
     extraLevels: 20,
     plasmaBase: 5,
     plasmaLinGrowth: 3,
     plasmaExpoGrowth: 1.05,
-    plasmaValue: function (zoneNumber) {
-      if (zoneNumber < 10) return 0
-
-      const linear = this.plasmaBase + (zoneNumber - 10) * this.plasmaLinGrowth
-      const expoMulti = Math.pow(this.plasmaExpoGrowth, zoneNumber - 1)
-      return Math.round(linear * expoMulti)
-    },
   },
   regularSpawnChance: 0.97,
   specialSpawnChance: 0.005,
+} as const
+
+export const monsterCalc = {
+  plasmaValue: (zoneNumber: number): number => {
+    if (zoneNumber < 10) return 0
+
+    const linear = MONSTER_CONFIG.boss.plasmaBase + (zoneNumber - 10) * MONSTER_CONFIG.boss.plasmaLinGrowth
+    const expoMulti = Math.pow(MONSTER_CONFIG.boss.plasmaExpoGrowth, zoneNumber - 1)
+    return Math.round(linear * expoMulti)
+  },
+  goldValue: (config: MonsterType, baseValue: number, monsterLevel: number): number => {
+    const { healthDivisor, healthMultiBonus } = MONSTER_CONFIG.goldValue
+    const goldMulti = config.goldMulti ?? 1
+    const dampening = monsterLevel > 30 ? Math.max(0.6, monsterLevel * MONSTER_CONFIG.goldValue.dampenRate) : 1
+
+    return Math.floor(
+      (baseValue / healthDivisor) * (config.healthMulti * healthMultiBonus) * goldMulti * (1 - dampening),
+    )
+  },
 }
 
 const MONSTER_VARIATIONS: MonsterType[] = [
@@ -274,10 +287,8 @@ class Monster extends BaseMonster implements Enemy {
     this.attackRate = this.baseAttackRate * config.attackRateMulti
     this.maxHealth = this.health
     this.image = config.imagePath
-    const goldMulti = config.goldMulti ?? 1
-    const { healthDivisor, healthMultiBonus } = MONSTER_CONFIG.goldValue
-    this.goldValue = Math.floor((this.baseHealth / healthDivisor) * (config.healthMulti * healthMultiBonus) * goldMulti)
-    this.plasmaValue = isBoss ? MONSTER_CONFIG.boss.plasmaValue(zoneNumber) : 0
+    this.goldValue = monsterCalc.goldValue(config, this.baseHealth, this.level)
+    this.plasmaValue = isBoss ? monsterCalc.plasmaValue(zoneNumber) : 0
   }
 }
 

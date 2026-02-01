@@ -48,6 +48,7 @@ interface AttackConfig {
 interface GoldConfig {
   healthDivisor: number
   healthMultiBonus: number
+  dampenRate: number
 }
 
 interface BossConfig {
@@ -55,7 +56,6 @@ interface BossConfig {
   plasmaBase: number
   plasmaLinGrowth: number
   plasmaExpoGrowth: number
-  plasmaValue: (zoneNumber: number) => number
 }
 
 export interface BaseMonsterConfig {
