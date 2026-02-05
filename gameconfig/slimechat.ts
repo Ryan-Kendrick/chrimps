@@ -30,6 +30,7 @@ export type EventHandlers = {
 }
 
 class ChatConnection {
+  private _modalClosed = false
   private _connection: HubConnection
   private _messageRetryTime = 60000
   private _optimismTime = 6000
@@ -158,10 +159,7 @@ class ChatConnection {
   }
 
   private async connect(isConnectedSetterFn: (isConnected: boolean) => void): Promise<void> {
-    if (this._connection.state !== "Disconnected") {
-      console.error("Connect chat called but the chat state is not currently 'Disconnected'")
-      return
-    }
+    if (this._connection.state !== "Disconnected" || this._modalClosed) return
 
     if (ChatConnection._slowConnectTimer) {
       clearTimeout(ChatConnection._slowConnectTimer)
@@ -197,9 +195,9 @@ class ChatConnection {
     } catch (err: any) {
       console.error("Failed to connect to chat:", err)
 
-      if (err.message && err.message.includes("stopped during negotiation")) {
-        return
-      }
+      // if (err.message && err.message.includes("stopped during negotiation")) {
+      //   return
+      // }
 
       isConnectedSetterFn(false)
 
@@ -208,9 +206,11 @@ class ChatConnection {
         ChatConnection._slowConnectTimer = undefined
       }
 
-      ChatConnection._reconnectTimer = setTimeout(() => {
-        this.connect(isConnectedSetterFn)
-      }, 5000)
+      if (!this._modalClosed) {
+        ChatConnection._reconnectTimer = setTimeout(() => {
+          this.connect(isConnectedSetterFn)
+        }, 5000)
+      }
     }
   }
 
@@ -265,6 +265,7 @@ class ChatConnection {
       console.warn("No ChatInstance to clean up.")
       return
     }
+    this.ChatInstance._modalClosed = true
 
     this.ChatInstance._connection.stop().catch((err) => console.error(err))
     this.ChatInstance = null as unknown as ChatConnection
