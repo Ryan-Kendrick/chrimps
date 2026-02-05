@@ -33,7 +33,7 @@ interface HealthConfig {
   zonePower: number
   zoneCoeff: number
   levelCoeff: number
-  expoStart: number
+  expoStartZone: number
   expoGrowthRate: number
   stageMin: number
   stageMax: number

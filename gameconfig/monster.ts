@@ -20,14 +20,12 @@ import wardSquidURL from "../assets/monsters/boss-ward-squid.webp"
 
 const MONSTER_CONFIG: BaseMonsterConfig = {
   health: {
-    // Scaling parameters
     base: 5,
     zonePower: 1.8,
     zoneCoeff: 0.8,
     levelCoeff: 0.15,
 
-    // Exponential scaling
-    expoStart: 40,
+    expoStartZone: 40,
     expoGrowthRate: 1.06,
 
     // Stage scaling within zones
@@ -236,7 +234,7 @@ class BaseMonster implements BaseEnemy {
       zonePower,
       zoneCoeff,
       levelCoeff,
-      expoStart,
+      expoStartZone: expoStart,
       expoGrowthRate: expoGrowth,
       stageMin,
       stageMax,
