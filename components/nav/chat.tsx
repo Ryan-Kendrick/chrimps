@@ -3,6 +3,7 @@ import { ChatUser, ConfirmedMessage, MessageQueue, SystemMessage, UserMessage } 
 import getInstance, { ChatConnection, EventHandlers, loadingSlime } from "../../gameconfig/slimechat"
 import { useAutoScroll } from "../../gameconfig/customHooks"
 import clsx from "clsx/lite"
+import { formatDate } from "../../gameconfig/utils"
 
 export default function Chat() {
   const [activeUsers, setActiveUsers] = useState<ChatUser[]>([])
@@ -139,9 +140,7 @@ export default function Chat() {
                       <p className="text-lg font-bold" style={{ color: message.color }}>
                         {message.name}
                       </p>
-                      <p className="text-end text-sm text-gray-500">
-                        at {new Date(message.unixTime).toLocaleTimeString()}
-                      </p>
+                      <p className="text-end text-sm text-gray-500">at {formatDate(new Date(message.unixTime))}</p>
                     </>
                   )}
                 </div>

@@ -46,6 +46,35 @@ export function formatSmallNumber(num: number): string {
   return num.toString()
 }
 
+export const formatDate = (date: Date) => {
+  const hours = date.getHours()
+  const period = hours >= 12 ? "PM" : "AM"
+  const hour12 = hours % 12 || 12
+  const minutes = String(date.getMinutes()).padStart(2, "0")
+  const seconds = String(date.getSeconds()).padStart(2, "0")
+
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ]
+
+  const day = date.getDate()
+  const month = months[date.getMonth()]
+  const year = String(date.getFullYear())
+
+  return `${hour12}:${minutes}:${seconds}${period} on ${day} ${month} ${year}`
+}
+
 type ModifierCalculation = (atLevel: number, prestigeUpgrade: PrestigeUpgrade) => number
 
 export const formatCurrPValue = (
