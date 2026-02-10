@@ -6,7 +6,7 @@ import clsx from "clsx/lite"
 interface Props {
   visible: boolean
   position: { x: number; y: number }
-  tooltipRef: React.RefObject<HTMLDivElement>
+  tooltipRef: React.RefObject<HTMLDivElement | null>
   hoveredUpgrade: PrestigeUpgradeId | null
 }
 

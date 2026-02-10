@@ -18,7 +18,7 @@ export default function MonsterHealth() {
   const targetHealth = useRef((monsterHealth / monsterMaxHealth) * 100)
   const interpRate = 5
   const [width, setWidth] = useState(100)
-  const frameRef = useRef<number>()
+  const frameRef = useRef<number>(0)
 
   useEffect(() => {
     targetHealth.current = (monsterHealth / monsterMaxHealth) * 100

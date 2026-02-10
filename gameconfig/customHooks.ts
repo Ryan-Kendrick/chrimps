@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react"
+import React, { useState, useEffect, useRef, useCallback, RefObject } from "react"
 import { useAppDispatch, useAppSelector } from "../redux/hooks"
 import {
   clearCatchUpTime,
@@ -598,8 +598,8 @@ export const useKeypressEasterEgg = () => {
 }
 
 interface ToolTipProps {
-  containerRef: React.RefObject<HTMLElement>
-  tooltipRef: React.RefObject<HTMLDivElement>
+  containerRef: RefObject<HTMLElement | null>
+  tooltipRef: RefObject<HTMLElement | null>
 }
 
 type Position = {

@@ -32,6 +32,7 @@ export default function PanelIndex() {
     currentZone >= UPGRADE_CONFIG.healer.visibleAtZone,
     currentZone >= UPGRADE_CONFIG.mage.visibleAtZone,
   ]
+
   const [tabHeight, setTabHeight] = useState(0)
   const isMobile = breakpoint === 768
   const tabRef = useRef<HTMLDivElement>(null)

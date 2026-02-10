@@ -3,6 +3,7 @@ import { useAppSelector } from "../../redux/hooks"
 import { selectZoneState } from "../../redux/zoneSlice"
 import { BossIcon, CookieEnjoyerIcon, ErrantPlasmaIcon, GemCrabIcon, MoneybagIcon } from "../svgIcons/stageIcons"
 import { Stage } from "../../models/zones"
+import { JSX } from "react"
 
 export default function ZoneMap() {
   const {

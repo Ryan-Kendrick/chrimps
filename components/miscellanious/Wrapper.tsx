@@ -32,7 +32,6 @@ export default function Wrapper({ children }: PropsWithChildren) {
 
   const renderDesktopNavigation = breakpoint > 1024
 
-
   // Force component remount on prestige
   const prestigeCount = useAppSelector(selectPrestigeCount)
 

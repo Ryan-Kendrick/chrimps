@@ -8,7 +8,6 @@ import ZoneMap from "./zoneMap"
 import ZoneSelector from "./zoneSelector"
 import FarmToggle from "./farmToggle"
 import Spotlight from "../miscellanious/Spotlight"
-import { selectPrestigeCount } from "../../redux/statsSlice"
 
 export default function CombatIndex({ children }: PropsWithChildren) {
   const currentZoneNumber = useAppSelector(selectCurrentZoneNumber)

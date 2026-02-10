@@ -1,5 +1,5 @@
 import clsx from "clsx/lite"
-import { MouseEvent, useEffect, useMemo, useRef, useState } from "react"
+import { JSX, MouseEvent, useEffect, useRef, useState } from "react"
 import PrestigeButton from "./prestigeButton"
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks"
 import { UPGRADE_CONFIG } from "../../../gameconfig/upgrades"

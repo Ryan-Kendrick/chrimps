@@ -1,4 +1,3 @@
-import { memo, useEffect, useState } from "react"
 import ReactModal from "react-modal"
 import { Styles as ModalStylesheet } from "react-modal"
 import { CancelIcon } from "../svgIcons/metaIcons"
@@ -12,7 +11,7 @@ import { usePageContext } from "vike-react/usePageContext"
 import { navigate } from "vike/client/router"
 import { useParams } from "../../gameconfig/customHooks"
 
-export const Navigation = memo(function Navigation() {
+export const Navigation = function Navigation() {
   const context = usePageContext()
   const params = useParams(context)
 
@@ -76,7 +75,7 @@ export const Navigation = memo(function Navigation() {
       </div>
     </div>
   )
-})
+}
 
 type NavigationLinkButtonProps = {
   text: string

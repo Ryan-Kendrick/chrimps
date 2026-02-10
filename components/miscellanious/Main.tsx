@@ -20,9 +20,7 @@ export default function Main() {
         <main className="flex flex-1 overflow-visible md:min-h-0">
           <div className="relative flex w-full flex-col-reverse lg:flex-row">
             <PanelIndex />
-            <CombatIndex>
-              {renderDesktopNavigation && <Navigation />}
-            </CombatIndex>
+            <CombatIndex>{renderDesktopNavigation && <Navigation />}</CombatIndex>
           </div>
         </main>
       )}
