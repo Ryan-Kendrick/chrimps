@@ -1,6 +1,7 @@
 import clsx from "clsx/lite"
 import coinURL from "/assets/icons/coin.png"
 import { formatSmallNumber } from "../../../gameconfig/utils"
+import { SnakeBorder } from "../../miscellanious/SnakeBorder"
 
 interface LevelUpProps {
   id: string

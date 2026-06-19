@@ -4,6 +4,7 @@ import { selectZoneState } from "../../redux/zoneSlice"
 import { BossIcon, CookieEnjoyerIcon, ErrantPlasmaIcon, GemCrabIcon, MoneybagIcon } from "../svgIcons/stageIcons"
 import { Stage } from "../../models/zones"
 import { JSX } from "react"
+import { SnakeBorder } from "../miscellanious/SnakeBorder"
 
 export default function ZoneMap() {
   const {
@@ -56,11 +57,12 @@ export default function ZoneMap() {
   })
 
   return (
-    <div className="flex items-end opacity-100">
+    <div className="flex items-end opacity-100 z-10">
       <div className="z-10 mb-2 box-content flex w-[20rem] flex-wrap-reverse content-start border-2 border-gray-300 md:w-[32rem] md:border-0 lg:w-[20rem] lg:border-2 xl:w-[32rem] xl:border-0 2xl:w-[40rem] 2xl:border-2">
         {stages.map((stage) => {
           const { thisStageNumber, isCurrentStage, isCompleted, isSpecial, iconVisible } = stage
-          return (
+
+          const cell = (
             <div
               key={thisStageNumber}
               className={clsx(
@@ -80,9 +82,15 @@ export default function ZoneMap() {
                 </div>
               </div>
             </div>
+ 
           )
+
+          return isCurrentStage ? <SnakeBorder config={{ color: [0, 144, 0], padding: 5, cornerRadius: 0 }} className="z-10"
+>{cell}</SnakeBorder> : cell
+          
         })}
       </div>{" "}
     </div>
+   
   )
 }
